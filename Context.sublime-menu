@@ -1,0 +1,12 @@
+[
+    {
+        "caption": "REST",
+        "children":
+        [
+            {
+                "caption": "Send request",
+                "command": "rest_request",
+            },
+        ]
+    }
+]

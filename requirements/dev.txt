@@ -1,0 +1,13 @@
+-r test.txt
+
+ipython
+pdbpp
+black
+isort
+flake8
+
+# PyLS
+python-lsp-server[all]
+mypy-ls
+pyls-isort
+pyls-black

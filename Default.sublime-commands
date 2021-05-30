@@ -1,0 +1,6 @@
+[
+    {
+        "caption": "REST: Send request",
+        "command": "rest_request"
+    }
+]
