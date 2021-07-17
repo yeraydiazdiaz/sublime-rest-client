@@ -1,6 +1,6 @@
 import typing as tp
 
-from sublime_rest import Request
+from .request import Request
 
 BOUNDARY = "###"
 
@@ -66,7 +66,7 @@ def _parse_url_section(url_section: str) -> tp.Tuple[str, str]:
     [url, *query_param_lines] = [line.strip() for line in url_section.splitlines()]
 
     if " " in url:
-        method, url = url_line.split(maxsplit=2)
+        method, url = url.split(maxsplit=2)
 
     url += "".join(query_param_lines)
     return method, url

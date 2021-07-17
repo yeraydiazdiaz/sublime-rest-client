@@ -1,5 +1,6 @@
 import os.path
 import sys
+import json
 
 # Import dependencies
 sys.path.append(os.path.dirname(__file__) + "/deps")
@@ -18,16 +19,26 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         print("Running Sublime REST", args)
         self.request_view = self.window.active_view()
 
-        request_text = self.get_request_text_from_selection()
-        if request_text == "":
-            self.log_to_status("Invalid request text: `{}`".format(request_text))
+        contents, pos = self.get_request_text_from_selection()
+        if contents == "":
+            self.log_to_status("Invalid request text: `{}`".format(contents))
             return
 
-        self.log_to_status("Sending request for: `{}`".format(request_text))
-        status, _headers, body = client.request(request_text)
+        self.log_to_status("Sending request for: `{}`".format(contents))
+
+        request = parser.parse(contents, pos)
+        status, headers, body = client.request(request)
+
         response_view = self.window.new_file()
         response_view.run_command(
-            "rest_replace_view_text", {"text": "\n".join([str(status), body])}
+            "rest_replace_view_text",
+            {
+                "text": "\n\n".join([
+                    f"{request.method} {request.url} ({status})",
+                    json.dumps(dict(headers), indent=2),
+                    body,
+                ])
+            }
         )
         self.log_to_status(status)
 
@@ -37,11 +48,9 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
 
     def get_request_text_from_selection(self) -> str:
         """Expands the selection to the boundaries of the request."""
-        # TODO: this is more an exercise of how to retrieve selections of text
-        # in sublime, but we probably will have to take the whole view soon
         selections = self.request_view.sel()
-        pos = self.request_view.rowcol(selections[0].a)
-        contents = self.view.substr(sublime.Region(0, self.view.size()))
+        pos, _ = self.request_view.rowcol(selections[0].a)
+        contents = self.request_view.substr(sublime.Region(0, self.request_view.size()))
         return contents, pos
 
 
@@ -54,6 +63,7 @@ class RestReplaceViewTextCommand(sublime_plugin.TextCommand):
     """
 
     def run(self, edit, text, point=None):
+        self.view.set_scratch(True)
         self.view.erase(edit, sublime.Region(0, self.view.size()))
         self.view.insert(edit, 0, text)
         if point is not None:
