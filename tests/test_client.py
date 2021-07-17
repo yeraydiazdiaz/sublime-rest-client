@@ -1,6 +1,7 @@
-from sublime_rest import client
+from sublime_rest import Request, client
 
 
 def test_request(httpserver):
     httpserver.expect_request("/").respond_with_json({"foo": "bar"})
-    assert client.request(httpserver.url_for("/"))
+    req = Request(url=httpserver.url_for("/"))
+    assert client.request(req)

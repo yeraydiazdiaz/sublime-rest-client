@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(__file__) + "/deps")
 import sublime
 import sublime_plugin
 
-from .sublime_rest import client
+from .sublime_rest import client, parser
 
 
 class RestRequestCommand(sublime_plugin.WindowCommand):
@@ -40,13 +40,9 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         # TODO: this is more an exercise of how to retrieve selections of text
         # in sublime, but we probably will have to take the whole view soon
         selections = self.request_view.sel()
-        if len(selections) > 1:
-            self.log_to_status("Multiple selections are not supported")
-            return ""
-
-        line_region = self.request_view.line(selections[0].a)
-        request_text = self.request_view.substr(line_region)
-        return request_text.strip()
+        pos = self.request_view.rowcol(selections[0].a)
+        contents = self.view.substr(sublime.Region(0, self.view.size()))
+        return contents, pos
 
 
 class RestReplaceViewTextCommand(sublime_plugin.TextCommand):
