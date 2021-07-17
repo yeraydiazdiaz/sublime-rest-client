@@ -34,12 +34,7 @@ def parse(contents: str, pos: int) -> Request:
 
     """
     block = _get_request_block(contents, pos)
-    method = "GET"
-    url = block
-    if " " in url:
-        method, url = block.split()
-    url = url.replace("\n", "")
-    return Request(url=url, method=method)
+    return _parse_request_block(block)
 
 
 def _get_request_block(contents: str, pos: int) -> str:
@@ -51,3 +46,11 @@ def _get_request_block(contents: str, pos: int) -> str:
 
     lines = [line for line in block.splitlines() if not line.startswith(BOUNDARY)]
     return "\n".join(lines)
+
+def _parse_request_block(block: str) -> Request:
+    method = "GET"
+    url = block
+    if " " in url:
+        method, url = block.split()
+    url = url.replace("\n", "")
+    return Request(url=url, method=method)
