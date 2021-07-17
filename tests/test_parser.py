@@ -57,3 +57,22 @@ def test_query_args_on_following_line(sep):
     req = parser.parse(contents, 0)
 
     assert req == Request(url="https://example.org?foo=bar&fizz=buzz")
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_headers(sep):
+    contents = sep.join([
+        "https://example.org",
+        "?foo=bar",
+        "&fizz=buzz",
+        "",
+        "content-type: application/json",
+        "authentication: bearer 123",
+    ])
+
+    req = parser.parse(contents, 0)
+
+    assert req == Request(
+        url="https://example.org?foo=bar&fizz=buzz",
+        headers={"authentication": "bearer 123", "content-type": "application/json"}
+    )

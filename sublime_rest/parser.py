@@ -1,3 +1,4 @@
+import typing as tp
 
 from sublime_rest import Request
 
@@ -48,9 +49,31 @@ def _get_request_block(contents: str, pos: int) -> str:
     return "\n".join(lines)
 
 def _parse_request_block(block: str) -> Request:
+    [url_line, *sections] = block.split("\n\n", 3)
+    method, url = _parse_url_line(url_line)
+    request = Request(url=url, method=method)
+
+    if sections:
+        headers_section = sections.pop(0)
+        headers = _parse_headers_section(headers_section)
+        request.headers = headers
+
+    return request
+
+
+def _parse_url_line(url_line: str) -> tp.Tuple[str, str]:
     method = "GET"
-    url = block
-    if " " in url:
-        method, url = block.split()
+    url = url_line
+    if " " in url_line:
+        method, url = url_line.split()
     url = url.replace("\n", "")
-    return Request(url=url, method=method)
+    return method, url
+
+
+def _parse_headers_section(headers_section: str) -> tp.Mapping[str, str]:
+    headers = {}
+    for line in headers_section.splitlines():
+        key, value = line.split(":", maxsplit=2)
+        headers[key.strip()] = value.strip()
+
+    return headers
