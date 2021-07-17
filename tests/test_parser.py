@@ -17,3 +17,19 @@ def test_single_line_method():
     req = parser.parse(contents, 0)
 
     assert req == Request(url="https://example.org", method="POST")
+
+
+@pytest.mark.parametrize("pos,expected_request", [
+    (5, Request(url="https://example.org", method="POST")),
+    (32, Request(url="https://example.com", method="GET")),
+])
+def test_multiple_lines(pos, expected_request):
+    contents = "\n".join([
+        "POST https://example.org",
+        "###",
+        "https://example.com",
+    ])
+
+    req = parser.parse(contents, pos)
+
+    assert req == expected_request

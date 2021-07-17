@@ -17,4 +17,7 @@ def _get_request_block(contents: str, pos: int) -> str:
     bottom = contents.find(BOUNDARY, pos)
     start = top if top != -1 else 0
     end = bottom if bottom != -1 else None
-    return contents[start:end].strip()
+    block = contents[start:end].strip()
+    if block.startswith(BOUNDARY):
+        block = block[block.rfind("\n") + 1:]
+    return block
