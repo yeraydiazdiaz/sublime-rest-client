@@ -50,8 +50,8 @@ def test_query_args_on_same_line():
 def test_query_args_on_following_line(sep):
     contents = sep.join([
         "https://example.org",
-        "?foo=bar",
-        "&fizz=buzz",
+        "    ?foo=bar",
+        "    &fizz=buzz",
     ])
 
     req = parser.parse(contents, 0)

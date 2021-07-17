@@ -49,8 +49,8 @@ def _get_request_block(contents: str, pos: int) -> str:
     return "\n".join(lines)
 
 def _parse_request_block(block: str) -> Request:
-    [url_line, *sections] = block.split("\n\n", 3)
-    method, url = _parse_url_line(url_line)
+    [url_section, *sections] = block.split("\n\n", 3)
+    method, url = _parse_url_section(url_section)
     request = Request(url=url, method=method)
 
     if sections:
@@ -61,12 +61,14 @@ def _parse_request_block(block: str) -> Request:
     return request
 
 
-def _parse_url_line(url_line: str) -> tp.Tuple[str, str]:
+def _parse_url_section(url_section: str) -> tp.Tuple[str, str]:
     method = "GET"
-    url = url_line
-    if " " in url_line:
-        method, url = url_line.split()
-    url = url.replace("\n", "")
+    [url, *query_param_lines] = [line.strip() for line in url_section.splitlines()]
+
+    if " " in url:
+        method, url = url_line.split(maxsplit=2)
+
+    url += "".join(query_param_lines)
     return method, url
 
 
