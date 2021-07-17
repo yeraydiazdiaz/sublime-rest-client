@@ -22,6 +22,10 @@ To start developing:
   is to create a virtual environment normally and create a symlink in
   `.pyenv/versions` with the name `3.8`
 1. `make install-dev`
+1. Install [`direnv`](https://direnv.net/) and run `direnv allow` to add the
+`PYTHONPATH` appropriately.
+  - This is a work around to packaging `sublime_rest` as it there can only be
+  one Python file at the root of plugins.
 
 The plugin vendors [urllib3](https://urllib3.readthedocs.io/en/latest/) and makes
 use of [certifi](https://pypi.org/project/certifi/) which is bundled with Sublime
