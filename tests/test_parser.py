@@ -19,11 +19,12 @@ def test_single_line_method():
     assert req == Request(url="https://example.org", method="POST")
 
 
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
 @pytest.mark.parametrize("pos,expected_request", [
     (5, Request(url="https://example.org", method="POST")),
     (32, Request(url="https://example.com", method="GET")),
 ])
-def test_multiple_lines(pos, expected_request):
+def test_multiple_lines(pos, expected_request, sep):
     contents = "\n".join([
         "POST https://example.org",
         "###",
@@ -33,3 +34,26 @@ def test_multiple_lines(pos, expected_request):
     req = parser.parse(contents, pos)
 
     assert req == expected_request
+
+
+def test_query_args_on_same_line():
+    contents = "\n".join([
+        "https://example.org?foo=bar&fizz=buzz",
+    ])
+
+    req = parser.parse(contents, 0)
+
+    assert req == Request(url="https://example.org?foo=bar&fizz=buzz")
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_query_args_on_following_line(sep):
+    contents = sep.join([
+        "https://example.org",
+        "?foo=bar",
+        "&fizz=buzz",
+    ])
+
+    req = parser.parse(contents, 0)
+
+    assert req == Request(url="https://example.org?foo=bar&fizz=buzz")
