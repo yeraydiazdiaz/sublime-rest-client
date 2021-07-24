@@ -1,6 +1,7 @@
 import os.path
 import sys
 import typing as tp
+from http import HTTPStatus
 
 # Import dependencies
 sys.path.append(os.path.dirname(__file__) + "/deps")
@@ -53,9 +54,10 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         headers_text = "\n".join(
             f"{header}: {value}" for header, value in headers.items()
         )
+        http_status = HTTPStatus(status)
         return "\n\n".join(
             [
-                f"{request.method} {request.url} ({status})",
+                f"{request.method} {request.url} {status} {http_status.name}",
                 headers_text,
                 body,
             ]
