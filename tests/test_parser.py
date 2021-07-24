@@ -32,7 +32,8 @@ def test_multiple_lines(pos, expected_request, sep):
         [
             "POST https://example.org",
             "###",
-            "     " "https://example.com",
+            "\n",
+            "https://example.com",
         ]
     )
 
