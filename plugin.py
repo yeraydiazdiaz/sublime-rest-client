@@ -1,6 +1,6 @@
 import os.path
 import sys
-import json
+import typing as tp
 
 # Import dependencies
 sys.path.append(os.path.dirname(__file__) + "/deps")
@@ -9,6 +9,7 @@ import sublime
 import sublime_plugin
 
 from .sublime_rest import client, parser
+from .sublime_rest.request import Request
 
 
 class RestRequestCommand(sublime_plugin.WindowCommand):
@@ -28,17 +29,11 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
 
         request = parser.parse(contents, pos)
         status, headers, body = client.request(request)
+        response_text = self.get_response_content(request, status, headers, body)
 
         response_view = self.window.new_file()
         response_view.run_command(
-            "rest_replace_view_text",
-            {
-                "text": "\n\n".join([
-                    f"{request.method} {request.url} ({status})",
-                    json.dumps(dict(headers), indent=2),
-                    body,
-                ])
-            }
+            "rest_replace_view_text", {"text": response_text}
         )
         self.log_to_status(status)
 
@@ -49,9 +44,18 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
     def get_request_text_from_selection(self) -> str:
         """Expands the selection to the boundaries of the request."""
         selections = self.request_view.sel()
-        pos, _ = self.request_view.rowcol(selections[0].a)
+        pos = selections[0].a
         contents = self.request_view.substr(sublime.Region(0, self.request_view.size()))
         return contents, pos
+
+    def get_response_content(self, request: Request, status: int, headers: tp.Dict[str, str], body: str):
+        """Combine request and response elements into a string for the response view."""
+        headers_text = "\n".join(f"{header}: {value}" for header, value in headers.items())
+        return "\n\n".join([
+            f"{request.method} {request.url} ({status})",
+            headers_text,
+            body,
+        ])
 
 
 class RestReplaceViewTextCommand(sublime_plugin.TextCommand):
