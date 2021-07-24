@@ -5,26 +5,28 @@ from .request import Request
 BOUNDARY = "###"
 
 
+class ParserError(Exception):
+    pass
+
+
 def parse(contents: str, pos: int) -> Request:
     """
     Constructs a Request object from the contents of the view and the position
     of the cursor in it.
 
     Query params can be set on the same line as the method and URL or in the
-    lines immediatetly following.
+    lines immediately following if they are indented.
 
-    Request headers can be set leaving a blank line after the initial method,
-    URL and query params block.
+    Request headers can be set after the initial method, URL and query params block.
 
-    The request body can be defined by again leaving a blank line after the
-    headers block. Note a Content-Type header must but defined.
+    The request body can be defined by leaving a blank line after the first
+    URL and headers block. Note a Content-Type header must but defined.
 
     Example:
 
     POST https://httpbin.org
-        ?foo=bar
-        &bar=baz
-
+      ?foo=bar
+      &bar=baz
     Authentication: Bearer some-JWT-token
     Content-Type: application/json
 
@@ -34,8 +36,11 @@ def parse(contents: str, pos: int) -> Request:
     }
 
     """
-    block = _get_request_block(contents, pos)
-    return _parse_request_block(block)
+    try:
+        block = _get_request_block(contents, pos)
+        return _parse_request_block(block)
+    except ValueError as exc:
+        raise ParserError("Error parsing request block") from exc
 
 
 def _get_request_block(contents: str, pos: int) -> str:
@@ -44,39 +49,46 @@ def _get_request_block(contents: str, pos: int) -> str:
     start = top if top != -1 else 0
     end = bottom if bottom != -1 else None
     block = contents[start:end].strip()
-    lines = [
-        line.strip() for line in block.splitlines() if not line.startswith(BOUNDARY)
-    ]
+    lines = [line for line in block.splitlines() if not line.startswith(BOUNDARY)]
     return "\n".join(lines).strip()
 
 
 def _parse_request_block(block: str) -> Request:
-    [url_section, *sections] = block.split("\n\n", 3)
-    method, url = _parse_url_section(url_section)
-    request = Request(url=url, method=method)
-
-    if sections:
-        headers_section = sections.pop(0)
-        headers = _parse_headers_section(headers_section)
-        request.headers = headers
-
+    [url_section, *body_section] = block.split("\n\n", 2)
+    method, url, headers = _parse_url_section(url_section)
+    body = body_section[0] if body_section else None
+    request = Request(url=url, method=method, headers=headers, body=body)
     return request
 
 
-def _parse_url_section(url_section: str) -> tp.Tuple[str, str]:
+def _parse_url_section(url_section: str) -> tp.Tuple[str, str, tp.Optional[str]]:
     method = "GET"
-    [url, *query_param_lines] = [line.strip() for line in url_section.splitlines()]
+    headers = None
+    [url, *query_params_header_lines] = url_section.splitlines()
     if " " in url:
         method, url = url.split(maxsplit=2)
 
-    url += "".join(query_param_lines)
-    return method, url
+    header_lines = []
+    for line in query_params_header_lines:
+        if line.startswith(" ") or line.startswith("\t"):
+            if not header_lines:
+                url += line.strip()
+            else:
+                raise ParserError("Query parameter lines must follow the URL line")
+        else:
+            header_lines.append(line)
+
+    headers = _parse_headers_section(header_lines)
+
+    return method, url, headers
 
 
-def _parse_headers_section(headers_section: str) -> tp.Mapping[str, str]:
+def _parse_headers_section(
+    headers_section: tp.List[str],
+) -> tp.Optional[tp.Mapping[str, str]]:
     headers = {}
-    for line in headers_section.splitlines():
+    for line in headers_section:
         key, value = line.split(":", maxsplit=2)
         headers[key.strip()] = value.strip()
 
-    return headers
+    return headers if headers else None

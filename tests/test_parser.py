@@ -42,8 +42,9 @@ def test_multiple_lines(pos, expected_request, sep):
     assert req == expected_request
 
 
-def test_query_args_on_same_line():
-    contents = "\n".join(
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_query_args_on_same_line(sep):
+    contents = sep.join(
         [
             "https://example.org?foo=bar&fizz=buzz",
         ]
@@ -70,13 +71,26 @@ def test_query_args_on_following_line(sep):
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
-def test_headers(sep):
+def test_query_args_must_be_indented(sep):
     contents = sep.join(
         [
             "https://example.org",
             "?foo=bar",
             "&fizz=buzz",
-            "",
+        ]
+    )
+
+    with pytest.raises(parser.ParserError):
+        _ = parser.parse(contents, 0)
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_headers(sep):
+    contents = sep.join(
+        [
+            "https://example.org",
+            "  ?foo=bar",
+            "  &fizz=buzz",
             "content-type: application/json",
             "authentication: bearer 123",
         ]
@@ -88,3 +102,19 @@ def test_headers(sep):
         url="https://example.org?foo=bar&fizz=buzz",
         headers={"authentication": "bearer 123", "content-type": "application/json"},
     )
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_headers_must_not_be_mixed_with_query_params(sep):
+    contents = sep.join(
+        [
+            "https://example.org",
+            "  ?foo=bar",
+            "content-type: application/json",
+            "  &fizz=buzz",
+            "authentication: bearer 123",
+        ]
+    )
+
+    with pytest.raises(parser.ParserError):
+        _ = parser.parse(contents, 0)
