@@ -3,6 +3,7 @@
 install-dev:
 	python -m pip install -U pip wheel setuptools
 	python -m pip install -r requirements/dev.txt
+	pre-commit install
 
 upgrade-deps:
 	rm -fr ./deps/**

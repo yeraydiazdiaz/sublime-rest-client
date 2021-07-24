@@ -32,9 +32,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         response_text = self.get_response_content(request, status, headers, body)
 
         response_view = self.window.new_file()
-        response_view.run_command(
-            "rest_replace_view_text", {"text": response_text}
-        )
+        response_view.run_command("rest_replace_view_text", {"text": response_text})
         self.log_to_status(status)
 
     def log_to_status(self, msg: str) -> None:
@@ -48,14 +46,20 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         contents = self.request_view.substr(sublime.Region(0, self.request_view.size()))
         return contents, pos
 
-    def get_response_content(self, request: Request, status: int, headers: tp.Dict[str, str], body: str):
+    def get_response_content(
+        self, request: Request, status: int, headers: tp.Dict[str, str], body: str
+    ):
         """Combine request and response elements into a string for the response view."""
-        headers_text = "\n".join(f"{header}: {value}" for header, value in headers.items())
-        return "\n\n".join([
-            f"{request.method} {request.url} ({status})",
-            headers_text,
-            body,
-        ])
+        headers_text = "\n".join(
+            f"{header}: {value}" for header, value in headers.items()
+        )
+        return "\n\n".join(
+            [
+                f"{request.method} {request.url} ({status})",
+                headers_text,
+                body,
+            ]
+        )
 
 
 class RestReplaceViewTextCommand(sublime_plugin.TextCommand):

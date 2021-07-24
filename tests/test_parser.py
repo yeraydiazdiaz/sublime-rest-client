@@ -20,17 +20,21 @@ def test_single_line_method():
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
-@pytest.mark.parametrize("pos,expected_request", [
-    (5, Request(url="https://example.org", method="POST")),
-    (32, Request(url="https://example.com", method="GET")),
-])
+@pytest.mark.parametrize(
+    "pos,expected_request",
+    [
+        (5, Request(url="https://example.org", method="POST")),
+        (32, Request(url="https://example.com", method="GET")),
+    ],
+)
 def test_multiple_lines(pos, expected_request, sep):
-    contents = "\n".join([
-        "POST https://example.org",
-        "###",
-        "     "
-        "https://example.com",
-    ])
+    contents = "\n".join(
+        [
+            "POST https://example.org",
+            "###",
+            "     " "https://example.com",
+        ]
+    )
 
     req = parser.parse(contents, pos)
 
@@ -38,9 +42,11 @@ def test_multiple_lines(pos, expected_request, sep):
 
 
 def test_query_args_on_same_line():
-    contents = "\n".join([
-        "https://example.org?foo=bar&fizz=buzz",
-    ])
+    contents = "\n".join(
+        [
+            "https://example.org?foo=bar&fizz=buzz",
+        ]
+    )
 
     req = parser.parse(contents, 0)
 
@@ -49,11 +55,13 @@ def test_query_args_on_same_line():
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
 def test_query_args_on_following_line(sep):
-    contents = sep.join([
-        "https://example.org",
-        "    ?foo=bar",
-        "    &fizz=buzz",
-    ])
+    contents = sep.join(
+        [
+            "https://example.org",
+            "    ?foo=bar",
+            "    &fizz=buzz",
+        ]
+    )
 
     req = parser.parse(contents, 0)
 
@@ -62,18 +70,20 @@ def test_query_args_on_following_line(sep):
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
 def test_headers(sep):
-    contents = sep.join([
-        "https://example.org",
-        "?foo=bar",
-        "&fizz=buzz",
-        "",
-        "content-type: application/json",
-        "authentication: bearer 123",
-    ])
+    contents = sep.join(
+        [
+            "https://example.org",
+            "?foo=bar",
+            "&fizz=buzz",
+            "",
+            "content-type: application/json",
+            "authentication: bearer 123",
+        ]
+    )
 
     req = parser.parse(contents, 0)
 
     assert req == Request(
         url="https://example.org?foo=bar&fizz=buzz",
-        headers={"authentication": "bearer 123", "content-type": "application/json"}
+        headers={"authentication": "bearer 123", "content-type": "application/json"},
     )

@@ -36,4 +36,3 @@ To update the version of `urllib3` edit `main.txt` and run `make upgrade-deps`.
 ## Alternatives
 
 https://packagecontrol.io/search/http
-

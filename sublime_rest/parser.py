@@ -45,11 +45,10 @@ def _get_request_block(contents: str, pos: int) -> str:
     end = bottom if bottom != -1 else None
     block = contents[start:end].strip()
     lines = [
-        line.strip()
-        for line in block.splitlines()
-        if not line.startswith(BOUNDARY)
+        line.strip() for line in block.splitlines() if not line.startswith(BOUNDARY)
     ]
     return "\n".join(lines).strip()
+
 
 def _parse_request_block(block: str) -> Request:
     [url_section, *sections] = block.split("\n\n", 3)
