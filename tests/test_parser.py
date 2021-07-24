@@ -28,6 +28,7 @@ def test_multiple_lines(pos, expected_request, sep):
     contents = "\n".join([
         "POST https://example.org",
         "###",
+        "     "
         "https://example.com",
     ])
 

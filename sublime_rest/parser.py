@@ -44,9 +44,12 @@ def _get_request_block(contents: str, pos: int) -> str:
     start = top if top != -1 else 0
     end = bottom if bottom != -1 else None
     block = contents[start:end].strip()
-
-    lines = [line for line in block.splitlines() if not line.startswith(BOUNDARY)]
-    return "\n".join(lines)
+    lines = [
+        line.strip()
+        for line in block.splitlines()
+        if not line.startswith(BOUNDARY)
+    ]
+    return "\n".join(lines).strip()
 
 def _parse_request_block(block: str) -> Request:
     [url_section, *sections] = block.split("\n\n", 3)
@@ -64,7 +67,6 @@ def _parse_request_block(block: str) -> Request:
 def _parse_url_section(url_section: str) -> tp.Tuple[str, str]:
     method = "GET"
     [url, *query_param_lines] = [line.strip() for line in url_section.splitlines()]
-
     if " " in url:
         method, url = url.split(maxsplit=2)
 
