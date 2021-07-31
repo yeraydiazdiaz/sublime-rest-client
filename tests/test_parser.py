@@ -118,3 +118,24 @@ def test_headers_must_not_be_mixed_with_query_params(sep):
 
     with pytest.raises(parser.ParserError):
         _ = parser.parse(contents, 0)
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_variable_substitution(sep):
+    contents = sep.join(
+        [
+            "@token = 1234",
+            "@foo=bar",
+            "https://example.org",
+            "  ?foo={{foo}}",
+            "content-type: application/json",
+            "authentication: bearer {{token}}",
+        ]
+    )
+
+    req = parser.parse(contents, 0)
+
+    assert req == Request(
+        url="https://example.org?foo=bar",
+        headers={"authentication": "bearer 1234", "content-type": "application/json"},
+    )

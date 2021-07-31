@@ -1,8 +1,11 @@
+import re
 import typing as tp
 
 from .request import Request
 
 BOUNDARY = "###"
+
+VARIABLES_RE = re.compile(r"^@(\w+)\s*=\s*(.+)$", re.MULTILINE)
 
 
 class ParserError(Exception):
@@ -37,10 +40,18 @@ def parse(contents: str, pos: int) -> Request:
 
     """
     try:
-        block = _get_request_block(contents, pos)
+        stripped_contents, variables = _get_variables_and_strip(contents)
+        block = _get_request_block(stripped_contents, pos)
+        block = _apply_variable_substitution(block, variables)
         return _parse_request_block(block)
     except ValueError as exc:
         raise ParserError("Error parsing request block") from exc
+
+
+def _get_variables_and_strip(contents: str) -> tp.Tuple[str, tp.Mapping[str, str]]:
+    variables = {name: value for name, value in VARIABLES_RE.findall(contents)}
+    contents = VARIABLES_RE.sub("", contents)
+    return contents, variables
 
 
 def _get_request_block(contents: str, pos: int) -> str:
@@ -92,3 +103,9 @@ def _parse_headers_section(
         headers[key.strip()] = value.strip()
 
     return headers if headers else None
+
+
+def _apply_variable_substitution(block: str, variables: tp.Mapping[str, str]):
+    for name, value in variables.items():
+        block = block.replace("{{%s}}" % name, value)
+    return block
