@@ -55,7 +55,7 @@ def _get_variables_and_strip(contents: str) -> tp.Tuple[str, tp.Mapping[str, str
 
 
 def _get_request_block(contents: str, pos: int) -> str:
-    top = contents.find(BOUNDARY, 0, pos)
+    top = contents.rfind(BOUNDARY, 0, pos)
     bottom = contents.find(BOUNDARY, pos)
     start = top if top != -1 else 0
     end = bottom if bottom != -1 else None

@@ -25,6 +25,7 @@ def test_single_line_method():
     [
         (5, Request(url="https://example.org", method="POST")),
         (32, Request(url="https://example.com", method="GET")),
+        (60, Request(url="https://another-example.com", method="GET")),
     ],
 )
 def test_multiple_lines(pos, expected_request, sep):
@@ -34,6 +35,9 @@ def test_multiple_lines(pos, expected_request, sep):
             "###",
             "\n",
             "https://example.com",
+            "###",
+            "\n",
+            "https://another-example.com",
         ]
     )
 
