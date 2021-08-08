@@ -1,6 +1,6 @@
 import pytest
 
-from sublime_rest import Request, parser
+from rest_client import Request, parser
 
 
 def test_single_line_no_method():

@@ -12,8 +12,8 @@ sys.path.append(os.path.dirname(__file__) + "/deps")
 import sublime
 import sublime_plugin
 
-from .sublime_rest import client, parser
-from .sublime_rest.request import Request
+from .rest_client import client, parser
+from .rest_client.request import Request
 
 
 class HttpRequestThread(threading.Thread):

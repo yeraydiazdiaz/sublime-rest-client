@@ -1,4 +1,4 @@
-from sublime_rest import Request, client
+from rest_client import Request, client
 
 
 def test_request(httpserver):

@@ -1,8 +1,13 @@
-# Sublime REST
+# Sublime REST Client
 
-An HTTP REST client plugin for Sublime Text 4 inspired by the amazing
+An HTTP client plugin for Sublime Text 4 inspired by the amazing
 [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 extension for VSCode.
+
+**Note**: This project requires Sublime Text 4, leveraging its more recent
+embedded Python version 3.8.8, supported by the amazing
+[`urllib3`](https://urllib3.readthedocs.io/en/latest/) with all its security
+guarantees.
 
 ## Development
 
@@ -15,7 +20,7 @@ to the root of this repo.
 
 To start developing:
 
-1. Install Python 3.8.8 which is the version in ST4 we use
+1. Install Python 3.8.8 which is the version embedded in ST4
 1. Create a virtual environment and activate it
   - Note: using pyenv-virtualenv creates a `.python-version` file which conflicts
   with Sublime Text and causes it to ignore the plugin completely, a work around
