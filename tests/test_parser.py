@@ -143,3 +143,25 @@ def test_variable_substitution(sep):
         url="https://example.org?foo=bar",
         headers={"authentication": "bearer 1234", "content-type": "application/json"},
     )
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_variable_substitution_last_name_is_used(sep):
+    contents = sep.join(
+        [
+            "@token = 1234",
+            "@foo=bar",
+            "@token = 4567",
+            "https://example.org",
+            "  ?foo={{foo}}",
+            "content-type: application/json",
+            "authentication: bearer {{token}}",
+        ]
+    )
+
+    req = parser.parse(contents, 0)
+
+    assert req == Request(
+        url="https://example.org?foo=bar",
+        headers={"authentication": "bearer 4567", "content-type": "application/json"},
+    )
