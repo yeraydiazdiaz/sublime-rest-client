@@ -1,0 +1,40 @@
+%YAML 1.2
+---
+name: REST
+file_extensions: [rest, http]
+scope: source.http
+prototype:
+  - include: comments
+
+contexts:
+  main:
+    - match: ^\s*(@)([^\s=]+)\s*=\s*(.*?)\s*$
+      name: http.variables
+      captures:
+        1: keyword.other.http
+        2: variable.other.http
+        3: string.other.http
+
+    - match: ^\s*(#{3,}.*)\s*$
+      name: http.comments
+      captures:
+        1: comment.line.sharp
+
+    - match: ^\s*(GET|POST|PUT|PATCH|DELETE)
+      name: http.methods
+      captures:
+        1: keyword.other.http
+
+    - match: (\{{2})(.+)(\}{2})
+      name: http.variables
+      captures:
+        1: string.other.http
+        2: variable.other.http
+        3: string.other.http
+
+    - match: ^\s*([\w\-]+)\s*(\:)\s+(.*?)\s*$
+      name: http.headers
+      captures:
+        1: keyword.other.http
+        2: keyword.other.http
+        3: variable.other.http
