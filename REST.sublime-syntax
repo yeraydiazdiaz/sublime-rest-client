@@ -15,26 +15,26 @@ contexts:
         2: variable.other.http
         3: string.other.http
 
-    - match: ^\s*(#{3,}.*)\s*$
+    - match: ^[^#]*(#.*)\s*$
       name: http.comments
       captures:
         1: comment.line.sharp
 
-    - match: ^\s*(GET|POST|PUT|PATCH|DELETE)
+    - match: ^\s*(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|CONNECT|TRACE)
       name: http.methods
       captures:
-        1: keyword.other.http
+        1: keyword.control.http
 
-    - match: (\{{2})(.+)(\}{2})
+    - match: (\{{2})([^}]+)(\}{2})
       name: http.variables
       captures:
         1: string.other.http
         2: variable.other.http
         3: string.other.http
 
-    - match: ^\s*([\w\-]+)\s*(\:)\s+(.*?)\s*$
+    - match: ^\s*([\w\-]+)\s*(\:)\s+(.*?)
       name: http.headers
       captures:
-        1: keyword.other.http
+        1: entity.name.tag.http
         2: keyword.other.http
         3: variable.other.http
