@@ -125,6 +125,7 @@ class RestReplaceViewTextCommand(sublime_plugin.TextCommand):
     def run(self, edit, text, point=None):
         self.view.set_scratch(True)
         self.view.erase(edit, sublime.Region(0, self.view.size()))
+        self.view.assign_syntax("scope:source.http-response")
         self.view.insert(edit, 0, text)
         if point is not None:
             self.view.sel().clear()

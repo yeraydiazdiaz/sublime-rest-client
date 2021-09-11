@@ -1,20 +1,13 @@
 %YAML 1.2
 ---
-name: REST
-file_extensions: [rest, http]
-scope: source.http
+name: REST Response
+file_extensions: [response]
+scope: source.http-response
 prototype:
   - include: comments
 
 contexts:
   main:
-    - match: ^\s*(@)([^\s=]+)\s*=\s*(.*?)\s*$
-      name: http.variables
-      captures:
-        1: keyword.other.http
-        2: variable.other.http
-        3: string.other.http
-
     - match: ^[^#]*(#.*)\s*$
       name: http.comments
       captures:
@@ -25,12 +18,10 @@ contexts:
       captures:
         1: keyword.control.http
 
-    - match: (\{{2})([^}]+)(\}{2})
-      name: http.variables
+    - match: (\d{3} [A-Z ]+)
+      name: http.status_code
       captures:
         1: string.other.http
-        2: variable.other.http
-        3: string.other.http
 
     - match: ^\s*([\w\-]+\s*\:)\s+(.*?)
       name: http.headers
