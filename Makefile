@@ -1,4 +1,4 @@
-.PHONY: deps install-dev tests
+.PHONY: deps install-dev
 
 install-dev:
 	python -m pip install -U pip wheel setuptools

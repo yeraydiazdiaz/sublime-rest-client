@@ -8,5 +8,7 @@ http = urllib3.PoolManager(cert_reqs="CERT_REQUIRED", ca_certs=certifi.where())
 
 def request(request: Request):
     print(f"Requesting {request.method} {request.url}")
-    response = http.request(request.method, request.url, headers=request.headers)
+    response = http.request(
+        request.method, request.url, headers=request.headers, body=request.body
+    )
     return response.status, response.headers, response.data.decode("utf-8")
