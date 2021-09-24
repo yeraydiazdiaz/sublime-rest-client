@@ -90,7 +90,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         view = view or self.request_view
         view.set_status("rest", "REST: {}".format(msg))
 
-    def get_request_text_from_selection(self) -> str:
+    def get_request_text_from_selection(self) -> tp.Tuple[str, int]:
         """Expands the selection to the boundaries of the request."""
         selections = self.request_view.sel()
         pos = selections[0].a

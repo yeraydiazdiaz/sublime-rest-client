@@ -7,5 +7,5 @@ from dataclasses import dataclass
 class Request:
     url: str
     method: str = "GET"
-    headers: tp.Mapping[str, str] = None
-    body: str = None
+    headers: tp.Optional[tp.Mapping[str, str]] = None
+    body: tp.Optional[str] = None
