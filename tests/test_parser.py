@@ -152,6 +152,7 @@ def test_variable_substitution_last_name_is_used(sep):
             "@token = 1234",
             "@foo=bar",
             "@token = 4567",
+            "# a comment",
             "https://example.org",
             "  ?foo={{foo}}",
             "content-type: application/json",

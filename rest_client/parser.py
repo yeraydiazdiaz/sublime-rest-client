@@ -61,7 +61,7 @@ def _get_request_block(contents: str, pos: int) -> str:
     lines = (
         line
         for line in block.splitlines()
-        if not (line.startswith(BOUNDARY) or line.startswith("@"))
+        if not (line.startswith("#") or line.startswith("@"))
     )
     return "\n".join(lines).strip()
 
