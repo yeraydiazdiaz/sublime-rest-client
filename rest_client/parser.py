@@ -41,6 +41,7 @@ def parse(contents: str, pos: int) -> Request:
     """
     try:
         stripped_contents, variables = _get_variables_and_strip(contents)
+        pos = pos - (len(contents) - len(stripped_contents))
         block = _get_request_block(stripped_contents, pos)
         block = _apply_variable_substitution(block, variables)
         return _parse_request_block(block)
