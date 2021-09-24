@@ -40,19 +40,16 @@ def parse(contents: str, pos: int) -> Request:
 
     """
     try:
-        stripped_contents, variables = _get_variables_and_strip(contents)
-        pos = pos - (len(contents) - len(stripped_contents))
-        block = _get_request_block(stripped_contents, pos)
+        variables = _get_variables(contents)
+        block = _get_request_block(contents, pos)
         block = _apply_variable_substitution(block, variables)
         return _parse_request_block(block)
     except ValueError as exc:
         raise ParserError("Error parsing request block") from exc
 
 
-def _get_variables_and_strip(contents: str) -> tp.Tuple[str, tp.Mapping[str, str]]:
-    variables = {name: value for name, value in VARIABLES_RE.findall(contents)}
-    contents = VARIABLES_RE.sub("", contents)
-    return contents, variables
+def _get_variables(contents: str) -> tp.Mapping[str, str]:
+    return {name: value for name, value in VARIABLES_RE.findall(contents)}
 
 
 def _get_request_block(contents: str, pos: int) -> str:
@@ -61,7 +58,11 @@ def _get_request_block(contents: str, pos: int) -> str:
     start = top if top != -1 else 0
     end = bottom if bottom != -1 else None
     block = contents[start:end].strip()
-    lines = [line for line in block.splitlines() if not line.startswith(BOUNDARY)]
+    lines = (
+        line
+        for line in block.splitlines()
+        if not (line.startswith(BOUNDARY) or line.startswith("@"))
+    )
     return "\n".join(lines).strip()
 
 
