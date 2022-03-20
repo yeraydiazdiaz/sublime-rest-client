@@ -3,6 +3,7 @@
 name: REST Response
 file_extensions: [response]
 scope: source.http-response
+version: 2
 prototype:
   - include: comments
 
@@ -28,3 +29,10 @@ contexts:
       captures:
         1: entity.name.tag.http
         2: variable.other.http
+
+    - match: ^{[\W]+$
+      name: http.json
+      push: Packages/JSON/JSON.sublime-syntax
+      with_prototype:
+        - match: ^}[\W]+$
+          pop: true

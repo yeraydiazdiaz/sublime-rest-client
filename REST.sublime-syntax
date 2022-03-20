@@ -12,7 +12,7 @@ contexts:
       name: http.variables
       captures:
         1: keyword.other.http
-        2: variable.other.http
+        2: variable.parameter
         3: string.other.http
 
     - match: ^[^#]*(#.*)\s*$
@@ -29,11 +29,18 @@ contexts:
       name: http.variables
       captures:
         1: string.other.http
-        2: variable.other.http
+        2: variable.parameter
         3: string.other.http
 
     - match: ^\s*([\w\-]+\s*\:)\s+(.*?)
       name: http.headers
       captures:
         1: entity.name.tag.http
-        2: variable.other.http
+        2: variable.parameter
+
+    - match: ^{[\W]+$
+      name: http.json
+      push: Packages/JSON/JSON.sublime-syntax
+      with_prototype:
+        - match: ^}[\W]+$
+          pop: true
