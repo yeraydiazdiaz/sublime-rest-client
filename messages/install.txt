@@ -1,0 +1,18 @@
+Thanks for trying out Sublime REST Client!
+==========================================
+
+Sublime REST Client allows you to define and send HTTP requests directly
+from Sublime Text 4.
+
+Sublime REST Client is inspired by the excellent VSCode REST Client [1]
+extension and is supported by the amazing urllib3 [2] Python library.
+
+This project is in ALPHA stage, if you notice any errors or would like to
+suggest features, please raise an issue in our tracker:
+
+https://github.com/yeraydiazdiaz/sublime-rest-client/issues
+
+Happy HTTP requesting!
+
+[1] https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+[2] https://urllib3.readthedocs.io/en/stable/
