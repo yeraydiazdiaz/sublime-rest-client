@@ -30,9 +30,9 @@ contexts:
         1: entity.name.tag.http
         2: variable.other.http
 
-    - match: ^{[\W]+$
+    - match: ^[\{\[][\W]+$
       name: http.json
       push: Packages/JSON/JSON.sublime-syntax
       with_prototype:
-        - match: ^}[\W]+$
+        - match: ^[\}\]][\W]+$
           pop: true
