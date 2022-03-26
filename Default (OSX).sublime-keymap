@@ -1,6 +1,6 @@
 [
-    {
-      "keys": ["super+alt+r"],
-      "command": "rest_request"
-    }
+    // {
+    //   "keys": ["super+alt+r"],
+    //   "command": "rest_request"
+    // }
 ]

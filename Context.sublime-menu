@@ -1,12 +1,12 @@
 [
-    {
-        "caption": "REST",
-        "children":
-        [
-            {
-                "caption": "Send request",
-                "command": "rest_request",
-            },
-        ]
-    }
+    // {
+    //     "caption": "REST",
+    //     "children":
+    //     [
+    //         {
+    //             "caption": "Send request",
+    //             "command": "rest_request",
+    //         },
+    //     ]
+    // }
 ]

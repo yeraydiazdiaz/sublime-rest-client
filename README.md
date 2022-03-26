@@ -16,6 +16,13 @@ This project is considered **ALPHA** and has only been tested in Mac OS X.
 Sublime REST Client has not been released to Package Control yet, refer to the
 development section below for early testing.
 
+### Key bindings
+
+Sublime REST Client does not ship with default key bindings,
+if you would like to add them check the `.sublime-keymap` example files
+in the repository, uncomment, and copy-paste them into your key binding
+settings.
+
 ## Usage
 
 Sublime REST Client provides the same simple, declarative way of defining
@@ -25,8 +32,8 @@ HTTP requests as REST Client. As simple as:
 https://httpbin.org/get
 ```
 
-Invoking "REST: Send request" or using the default keystroke `super+alt+r`
-will send the request to the URL and write the response in another tab:
+Invoking "REST: Send request" will send the request to the URL and write
+the response in another tab:
 
 ```
 GET https://httpbin.org/get 200 OK
