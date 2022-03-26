@@ -53,6 +53,24 @@ Access-Control-Allow-Credentials: true
 }
 ```
 
+### Query parameters
+
+Query parameters can be added as usual in the first line of the request definition:
+
+```
+GET https://httpbin.org/get?hello=world
+```
+
+Or the subsequent lines with an indentation:
+
+```
+GET https://httpbin.org/get
+  ?hello=world
+  &client=sublime
+```
+
+### Request headers
+
 Request definitions may include the HTTP method and request headers:
 
 ```
