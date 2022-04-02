@@ -16,12 +16,22 @@ This project is considered **ALPHA** and has only been tested in Mac OS X.
 Sublime REST Client has not been released to Package Control yet, refer to the
 development section below for early testing.
 
-### Key bindings
+### Commands
 
-Sublime REST Client does not ship with default key bindings,
-if you would like to add them check the `.sublime-keymap` example files
-in the repository, uncomment, and copy-paste them into your key binding
-settings.
+Currently there is only a one command `REST: Send request`.
+
+Sublime REST Client does not ship with default key bindings for it, you can add
+them yourself by opening `Preferences: Key bindings` and adding the following
+to the list of bindings:
+
+```
+{
+   "keys": ["ctrl+alt+r"],
+   "command": "rester_http_request"
+}
+```
+
+Changing the `keys` to whatever combination you'd like.
 
 ## Usage
 
