@@ -13,15 +13,17 @@ This project is considered **ALPHA** and has only been tested in Mac OS X.
 
 ## Installation
 
-Sublime REST Client has not been released to Package Control yet, refer to the
-development section below for early testing.
+1. From Sublime Text 4, install [Package Control](https://packagecontrol.io/installation)
+if you haven't already.
+1. Run `Package Control: Install Package` from the Command Palette.
+1. Type `REST` and you should see `REST Client` in the list, select it to install.
 
-### Commands
+### Key bindings
 
 Currently there is only a one command `REST: Send request`.
 
 Sublime REST Client does not ship with default key bindings for it, you can add
-them yourself by opening `Preferences: Key bindings` and adding the following
+it yourself by opening `Preferences: Key bindings` and adding the following
 to the list of bindings:
 
 ```
