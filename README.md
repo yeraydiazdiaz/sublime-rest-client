@@ -4,6 +4,8 @@ An HTTP client plugin for Sublime Text 4 inspired by the amazing
 [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
 extension for VSCode.
 
+<img src="https://raw.githubusercontent.com/yeraydiazdiaz/sublime-rest-client/main/docs/assets/sublime_rest_client_demo.gif" alt="Sublime REST Client demo" />
+
 Sublime REST Client vendors the excellent
 [urllib3](https://urllib3.readthedocs.io/en/latest/) and uses
 [certifi](https://pypi.org/project/certifi/) which is bundled with Sublime
