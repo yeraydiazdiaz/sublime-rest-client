@@ -1,12 +1,8 @@
 -r test.txt
-
-certifi==2020.04.05.1  # matching ST4's embedded version
+-r lint.txt
 
 ipython
 pdbpp
-black
-isort
-flake8
 pre-commit
 
 # PyLS

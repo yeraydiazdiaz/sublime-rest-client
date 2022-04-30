@@ -1,0 +1,47 @@
+---
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    name: "Lint checks"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "actions/setup-python@v2"
+        with:
+          python-version: "3.8"
+
+      - name: "Install dependencies"
+        run: |
+          set -xe
+          pip install --upgrade pip wheel
+          pip install -r requirements/lint.txt
+
+      - name: "Run linting checks"
+        run: |
+          black --check .
+          flake8
+
+  tests:
+    name: "Unit tests"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "actions/setup-python@v2"
+        with:
+          python-version: "3.8"
+
+      - name: "Install dependencies"
+        run: |
+          set -xe
+          python -vv
+          pip install --upgrade pip wheel
+          pip install -r requirements/test.txt
+
+      - name: "Run tests"
+        run: |
+          coverage run -m pytest
+          coverage report --fail-under=100
