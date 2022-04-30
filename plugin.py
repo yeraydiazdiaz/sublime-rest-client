@@ -1,9 +1,9 @@
 import os.path
 import sys
-import typing as tp
-from http import HTTPStatus
 import threading
 import traceback
+import typing as tp
+from http import HTTPStatus
 from time import perf_counter
 
 # Import dependencies
@@ -21,15 +21,16 @@ class HttpRequestThread(threading.Thread):
         super().__init__()
         self.request = request
         self.success = None
+        self.result = None
 
     def run(self):
         self._start = perf_counter()
         try:
             self.result = client.request(self.request)
             self.success = True
-        except Exception:
+        except Exception as exc:
+            self.result = (exc, traceback.format_exc())
             self.success = False
-            self.result = traceback.format_exc()
         finally:
             self._end = perf_counter()
             self.elapsed = self._end - self._start
@@ -82,8 +83,12 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         self.log_to_status(msg, response_view)
 
     def on_error(self, thread: HttpRequestThread) -> None:
-        self.log_to_status("Unexpected error on request, please see logs")
-        print(thread.result)
+        msg = f"Error sending request in {thread.elapsed:.3f} seconds"
+        self.log_to_status(msg)
+        error_text = self.get_error_content(thread.request, *thread.get_result())
+        response_view = self.window.new_file()
+        response_view.run_command("rest_replace_view_text", {"text": error_text})
+        self.log_to_status(msg, response_view)
 
     def log_to_status(self, msg: str, view: sublime.View = None) -> None:
         """Displays the message in the status bar of the view."""
@@ -110,6 +115,16 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
                 f"{request.method} {request.url} {status} {http_status.name}",
                 headers_text,
                 body,
+            ]
+        )
+
+    def get_error_content(self, request: Request, exc: Exception, traceback: str):
+        """Compose error content for the response view."""
+        return "\n\n".join(
+            [
+                f"REST Client: Error on request to {request.url}",
+                repr(exc),
+                traceback,
             ]
         )
 
