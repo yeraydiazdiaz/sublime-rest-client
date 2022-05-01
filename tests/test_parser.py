@@ -3,7 +3,7 @@ import pytest
 from rest_client import Request, parser
 
 
-def test_single_line_no_method():
+def test_single_line_no_method() -> None:
     contents = "https://example.com"
 
     req = parser.parse(contents, 0)
@@ -11,7 +11,7 @@ def test_single_line_no_method():
     assert req == Request(url="https://example.com")
 
 
-def test_single_line_method():
+def test_single_line_method() -> None:
     contents = "POST https://example.org"
 
     req = parser.parse(contents, 0)
@@ -28,7 +28,7 @@ def test_single_line_method():
         (60, Request(url="https://another-example.com", method="GET")),
     ],
 )
-def test_multiple_lines(pos, expected_request, sep):
+def test_multiple_lines(pos: int, expected_request: Request, sep: str) -> None:
     contents = "\n".join(
         [
             "POST https://example.org",
@@ -47,7 +47,7 @@ def test_multiple_lines(pos, expected_request, sep):
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
-def test_query_args_on_same_line(sep):
+def test_query_args_on_same_line(sep: str) -> None:
     contents = sep.join(
         [
             "https://example.org?foo=bar&fizz=buzz",
@@ -60,7 +60,7 @@ def test_query_args_on_same_line(sep):
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
-def test_query_args_on_following_line(sep):
+def test_query_args_on_following_line(sep: str) -> None:
     contents = sep.join(
         [
             "https://example.org",
@@ -75,7 +75,7 @@ def test_query_args_on_following_line(sep):
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
-def test_query_args_must_be_indented(sep):
+def test_query_args_must_be_indented(sep: str) -> None:
     contents = sep.join(
         [
             "https://example.org",
@@ -89,7 +89,7 @@ def test_query_args_must_be_indented(sep):
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
-def test_headers(sep):
+def test_headers(sep: str) -> None:
     contents = sep.join(
         [
             "https://example.org",
@@ -109,7 +109,7 @@ def test_headers(sep):
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
-def test_headers_must_not_be_mixed_with_query_params(sep):
+def test_headers_must_not_be_mixed_with_query_params(sep: str) -> None:
     contents = sep.join(
         [
             "https://example.org",
@@ -125,7 +125,7 @@ def test_headers_must_not_be_mixed_with_query_params(sep):
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
-def test_variable_substitution(sep):
+def test_variable_substitution(sep: str) -> None:
     contents = sep.join(
         [
             "@token = 1234",
@@ -146,7 +146,7 @@ def test_variable_substitution(sep):
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
-def test_variable_substitution_last_name_is_used(sep):
+def test_variable_substitution_last_name_is_used(sep: str) -> None:
     contents = sep.join(
         [
             "@token = 1234",

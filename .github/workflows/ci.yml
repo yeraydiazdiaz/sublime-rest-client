@@ -23,6 +23,7 @@ jobs:
         run: |
           black --check .
           flake8
+          mypy .
 
   tests:
     name: "Unit tests"
