@@ -2,9 +2,9 @@ import os.path
 import sys
 import threading
 import traceback
-import typing as tp
 from http import HTTPStatus
 from time import perf_counter
+from typing import Any, Dict, Optional, Tuple
 
 # Import dependencies
 sys.path.append(os.path.dirname(__file__) + "/deps")
@@ -12,39 +12,51 @@ sys.path.append(os.path.dirname(__file__) + "/deps")
 import sublime
 import sublime_plugin
 
-from .rest_client import client, parser
+from .rest_client import Response, client, parser
 from .rest_client.request import Request
 
 
+class RestException(Exception):
+    pass
+
+
 class HttpRequestThread(threading.Thread):
-    def __init__(self, request):
+    def __init__(self, request: Request) -> None:
         super().__init__()
         self.request = request
-        self.success = None
-        self.result = None
+        self.success: Optional[bool] = None
+        self.response: Optional[Response] = None
+        self.error: Optional[Tuple[Exception, str]] = None
 
-    def run(self):
+    def run(self) -> None:
         self._start = perf_counter()
         try:
-            self.result = client.request(self.request)
+            self.response = client.request(self.request)
             self.success = True
         except Exception as exc:
-            self.result = (exc, traceback.format_exc())
+            self.error = (exc, traceback.format_exc())
             self.success = False
         finally:
             self._end = perf_counter()
             self.elapsed = self._end - self._start
 
-    def get_result(self):
-        return self.result
+    def get_response(self) -> Response:
+        if self.success is None or self.response is None:
+            raise RestException("Attempted to retrieve response before completion")
+        return self.response
+
+    def get_error(self) -> Tuple[Exception, str]:
+        if self.success is None or self.error is None:
+            raise RestException("Attempted to retrieve error before completion")
+        return self.error
 
 
 class RestRequestCommand(sublime_plugin.WindowCommand):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Tuple[Any], **kwargs: Dict[Any, Any]) -> None:
         super().__init__(*args, **kwargs)
         self._tick = 0
 
-    def run(self, *args) -> None:
+    def run(self, *args: Tuple[Any]) -> None:
         print("Running Sublime REST", args)
         self.request_view = self.window.active_view()
 
@@ -75,8 +87,10 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
     def on_success(self, thread: HttpRequestThread) -> None:
         msg = f"Response received in {thread.elapsed:.3f} seconds"
         self.log_to_status(msg)
-        status, headers, body = thread.get_result()
-        response_text = self.get_response_content(thread.request, status, headers, body)
+        response = thread.get_response()
+        response_text = self.get_response_content(
+            thread.request, response.status, response.headers, response.data
+        )
 
         response_view = self.window.new_file()
         response_view.run_command("rest_replace_view_text", {"text": response_text})
@@ -85,7 +99,8 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
     def on_error(self, thread: HttpRequestThread) -> None:
         msg = f"Error sending request in {thread.elapsed:.3f} seconds"
         self.log_to_status(msg)
-        error_text = self.get_error_content(thread.request, *thread.get_result())
+        error = thread.get_error()
+        error_text = self.get_error_content(thread.request, *error)
         response_view = self.window.new_file()
         response_view.run_command("rest_replace_view_text", {"text": error_text})
         self.log_to_status(msg, response_view)
@@ -95,7 +110,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         view = view or self.request_view
         view.set_status("rest", "REST: {}".format(msg))
 
-    def get_request_text_from_selection(self) -> tp.Tuple[str, int]:
+    def get_request_text_from_selection(self) -> Tuple[str, int]:
         """Expands the selection to the boundaries of the request."""
         selections = self.request_view.sel()
         pos = selections[0].a
@@ -103,8 +118,8 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         return contents, pos
 
     def get_response_content(
-        self, request: Request, status: int, headers: tp.Dict[str, str], body: str
-    ):
+        self, request: Request, status: int, headers: Dict[str, str], body: str
+    ) -> str:
         """Combine request and response elements into a string for the response view."""
         headers_text = "\n".join(
             f"{header}: {value}" for header, value in headers.items()
@@ -118,7 +133,9 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
             ]
         )
 
-    def get_error_content(self, request: Request, exc: Exception, traceback: str):
+    def get_error_content(
+        self, request: Request, exc: Exception, traceback: str
+    ) -> str:
         """Compose error content for the response view."""
         return "\n\n".join(
             [
@@ -137,11 +154,13 @@ class RestReplaceViewTextCommand(sublime_plugin.TextCommand):
 
     """
 
-    def run(self, edit, text, point=None):
+    def run(self, edit, text, point=None) -> None:  # type: ignore
         self.view.set_scratch(True)
         self.view.erase(edit, sublime.Region(0, self.view.size()))
         self.view.assign_syntax("scope:source.http-response")
         self.view.insert(edit, 0, text)
         if point is not None:
+            self.view.sel().clear()
+            self.view.sel().add(sublime.Region(point))
             self.view.sel().clear()
             self.view.sel().add(sublime.Region(point))

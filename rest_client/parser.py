@@ -1,5 +1,5 @@
 import re
-import typing as tp
+from typing import List, Mapping, Optional, Tuple
 
 from .request import Request
 
@@ -48,7 +48,7 @@ def parse(contents: str, pos: int) -> Request:
         raise ParserError("Error parsing request block") from exc
 
 
-def _get_variables(contents: str) -> tp.Mapping[str, str]:
+def _get_variables(contents: str) -> Mapping[str, str]:
     return {name: value for name, value in VARIABLES_RE.findall(contents)}
 
 
@@ -75,14 +75,14 @@ def _parse_request_block(block: str) -> Request:
 
 def _parse_url_section(
     url_section: str,
-) -> tp.Tuple[str, str, tp.Optional[tp.Mapping[str, str]]]:
+) -> Tuple[str, str, Optional[Mapping[str, str]]]:
     method = "GET"
     headers = None
     [url, *query_params_header_lines] = url_section.splitlines()
     if " " in url:
         method, url = url.split(maxsplit=2)
 
-    header_lines: tp.List[str] = []
+    header_lines: List[str] = []
     for line in query_params_header_lines:
         if line.startswith(" ") or line.startswith("\t"):
             if not header_lines:
@@ -98,8 +98,8 @@ def _parse_url_section(
 
 
 def _parse_headers_section(
-    headers_section: tp.List[str],
-) -> tp.Optional[tp.Mapping[str, str]]:
+    headers_section: List[str],
+) -> Optional[Mapping[str, str]]:
     headers = {}
     for line in headers_section:
         key, value = line.split(":", maxsplit=2)
@@ -108,7 +108,7 @@ def _parse_headers_section(
     return headers if headers else None
 
 
-def _apply_variable_substitution(block: str, variables: tp.Mapping[str, str]):
+def _apply_variable_substitution(block: str, variables: Mapping[str, str]) -> str:
     for name, value in variables.items():
         block = block.replace("{{%s}}" % name, value)
     return block
