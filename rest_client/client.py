@@ -1,4 +1,4 @@
-import certifi
+import certifi  # type: ignore
 import urllib3
 from dataclasses import dataclass
 from typing import Dict
