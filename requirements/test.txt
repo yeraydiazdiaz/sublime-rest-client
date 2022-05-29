@@ -1,5 +1,6 @@
 -r main.txt
 
+certifi==2020.04.05.1  # matching ST4's embedded version
 pytest
 pytest-httpserver
 coverage
