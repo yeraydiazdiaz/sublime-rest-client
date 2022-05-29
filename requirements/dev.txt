@@ -4,9 +4,3 @@
 ipython
 pdbpp
 pre-commit
-
-# PyLS
-python-lsp-server[all]
-mypy-ls
-pyls-isort
-pyls-black
