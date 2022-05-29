@@ -209,25 +209,30 @@ Authorization: Bearer {{token}}
 ## Development
 
 1. Install the plugin creating a symlink in
-$HOME/Library/Application Support/Sublime Text 3/Packages
-to the root of this repo.
+`$HOME/Library/Application Support/Sublime Text 3/Packages`
+to the root of this repo. The path may also be
+`$HOME/Library/Application Support/Sublime Text/Packages`.
+
+```bash
+ln -s `pwd` ~/Library/Application\ Support/Sublime\ Text/Packages
+```
 
 1. Run the `REST: Send request` command, or via the console
 `window.run_command("rest_request")`
 
 To start developing:
 
-1. Install Python 3.8.8 which is the version embedded in ST4
+1. Install Python 3.8.8 which is the version embedded in ST4, alternatively install
+the closest compatible version which is 3.8.13.
 1. Create a virtual environment and activate it
   - Note: if you use pyenv note it relies on a `.python-version` file, which
   Sublime Text also uses with different contents and will cause it to ignore
   the plugin completely. A work around is to create a virtual environment
   normally and create a symlink in `.pyenv/versions` with the name `3.8`.
 1. `make install-dev`
-1. Install [`direnv`](https://direnv.net/) and run `direnv allow` to add the
-`PYTHONPATH` appropriately.
-  - This is a work around to packaging `sublime_rest` as it there can only be
-  one Python file at the root of plugins.
+1. Install [`direnv`](https://direnv.net/) and run `direnv allow` to add the package
+to the `PYTHONPATH`. This is a work around to packaging `sublime_rest` as it there
+can only be one Python file at the root of plugins.
 
 To update the version of `urllib3` edit `main.txt` and run `make upgrade-deps`.
 
