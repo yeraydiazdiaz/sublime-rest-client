@@ -1,0 +1,5 @@
+{
+  "tests_dir": "tests/integration",
+  "verbosity": 5,
+  "capture_console": true
+}
