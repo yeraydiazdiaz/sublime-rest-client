@@ -7,3 +7,6 @@ ignore_missing_imports = true
 exclude = '''(?x)(
     ^deps/$
 )'''
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit"]
