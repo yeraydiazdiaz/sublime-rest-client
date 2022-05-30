@@ -1,4 +1,6 @@
 import os
+import sys
+import unittest
 from typing import Dict, Iterator, Tuple, Union, cast
 
 import sublime
@@ -88,6 +90,9 @@ class TestRestClient(DeferrableTestCase):
         self.assertIn("Date", headers)
         self.assertIn('"hello": "world!"', body)
 
+    @unittest.skipIf(
+        sys.platform == "win32", "Windows builds fail with 'Timeout: output is frozen.'"
+    )
     def test_error(self) -> Iterator[int]:
         utils.set_text_on_view(self.view, "http://localhost:9999")
         self.window.run_command("rest_request")
