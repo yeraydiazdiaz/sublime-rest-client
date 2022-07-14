@@ -1,4 +1,4 @@
-import typing as tp
+from typing import Optional, Mapping
 
 from dataclasses import dataclass
 
@@ -7,5 +7,5 @@ from dataclasses import dataclass
 class Request:
     url: str
     method: str = "GET"
-    headers: tp.Optional[tp.Mapping[str, str]] = None
-    body: tp.Optional[str] = None
+    headers: Optional[Mapping[str, str]] = None
+    body: Optional[str] = None

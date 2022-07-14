@@ -1,7 +1,8 @@
-import certifi  # type: ignore
-import urllib3
 from dataclasses import dataclass
 from typing import Dict
+
+import certifi  # type: ignore
+import urllib3
 
 from .request import Request
 
@@ -16,9 +17,12 @@ class Response:
 
 
 def request(request: Request) -> Response:
-    print(f"Requesting {request.method} {request.url}")
+    print(f"Requesting {request.method} {request.url}: {request.body}")
     response = http.request(
-        request.method, request.url, headers=request.headers, body=request.body
+        request.method,
+        request.url,
+        headers=request.headers,
+        body=request.body.encode("utf-8") if request.body is not None else None,
     )
     return Response(
         status=response.status,
