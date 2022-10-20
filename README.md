@@ -31,7 +31,7 @@ to the list of bindings:
 ```
 {
    "keys": ["ctrl+alt+r"],
-   "command": "rester_http_request"
+   "command": "rest_request"
 }
 ```
 
