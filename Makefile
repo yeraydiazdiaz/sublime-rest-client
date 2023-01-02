@@ -8,3 +8,8 @@ install-dev:
 upgrade-deps:
 	rm -fr ./deps/**
 	python -m pip install --upgrade --target "./deps" -r requirements/main.txt
+
+lint:
+	black --check .
+	flake8
+	mypy .
