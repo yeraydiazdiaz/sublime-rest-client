@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Upgrade urllib3 to 2.0.4
+
 ## 0.2.0 (2022-07-19)
 
 - Upgrade urllib3 to 1.26.10
