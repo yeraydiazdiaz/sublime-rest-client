@@ -67,7 +67,19 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
 
         self.log_to_status("Sending request for: `{}`".format(contents))
 
-        request = parser.parse(contents, pos)
+        try:
+            request = parser.parse(contents, pos)
+        except Exception:
+            self.log_to_status(
+                " ".join(
+                    [
+                        "Error while parsing REST request.",
+                        "Please check the console (View > Show Console)",
+                        "and report the error on",
+                        "https://github.com/yeraydiazdiaz/sublime-rest-client/issues",
+                    ]
+                )
+            )
 
         thread = HttpRequestThread(request)
         thread.start()
