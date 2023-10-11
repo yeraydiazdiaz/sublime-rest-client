@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Show message on status bar when an error occurs during parsing of a request block.
 - Fix incorrectly parsing headers whose value includes a colon.
 
 ## 0.2.1 (2023-08-18)
