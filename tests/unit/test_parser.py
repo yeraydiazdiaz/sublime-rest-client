@@ -96,7 +96,7 @@ def test_headers(sep: str) -> None:
             "  ?foo=bar",
             "  &fizz=buzz",
             "content-type: application/json",
-            "authentication: bearer 123",
+            "authentication: bearer abc:123",
         ]
     )
 
@@ -104,7 +104,10 @@ def test_headers(sep: str) -> None:
 
     assert req == Request(
         url="https://example.org?foo=bar&fizz=buzz",
-        headers={"authentication": "bearer 123", "content-type": "application/json"},
+        headers={
+            "authentication": "bearer abc:123",
+            "content-type": "application/json",
+        },
     )
 
 
