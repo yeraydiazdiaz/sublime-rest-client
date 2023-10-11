@@ -80,7 +80,7 @@ def _parse_url_section(
     headers = None
     [url, *query_params_header_lines] = url_section.splitlines()
     if " " in url:
-        method, url = url.split(maxsplit=2)
+        method, url = url.split(maxsplit=1)
 
     header_lines: List[str] = []
     for line in query_params_header_lines:
@@ -102,7 +102,7 @@ def _parse_headers_section(
 ) -> Optional[Mapping[str, str]]:
     headers = {}
     for line in headers_section:
-        key, value = line.split(":", maxsplit=2)
+        key, value = line.split(":", maxsplit=1)
         headers[key.strip()] = value.strip()
 
     return headers if headers else None
