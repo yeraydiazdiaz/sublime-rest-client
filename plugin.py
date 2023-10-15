@@ -80,10 +80,10 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
                     ]
                 )
             )
-
-        thread = HttpRequestThread(request)
-        thread.start()
-        self.handle_thread(thread)
+        else:
+            thread = HttpRequestThread(request)
+            thread.start()
+            self.handle_thread(thread)
 
     def handle_thread(self, thread: HttpRequestThread) -> None:
         if thread.is_alive():
