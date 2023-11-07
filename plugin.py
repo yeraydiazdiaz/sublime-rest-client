@@ -55,6 +55,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
     def __init__(self, *args: Tuple[Any], **kwargs: Dict[Any, Any]) -> None:
         super().__init__(*args, **kwargs)
         self._tick = 0
+        self._view = None
 
     def run(self, *args: Tuple[Any]) -> None:
         print("Running Sublime REST", args)
@@ -85,6 +86,12 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
             thread.start()
             self.handle_thread(thread)
 
+    def get_view(self):
+        if not self._view or not self._view.is_valid():
+            self._view = self.window.new_file()
+
+        return self._view
+
     def handle_thread(self, thread: HttpRequestThread) -> None:
         if thread.is_alive():
             dots = "".join("." if j != self._tick % 3 else " " for j in range(3))
@@ -104,7 +111,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
             thread.request, response.status, response.headers, response.data
         )
 
-        response_view = self.window.new_file()
+        response_view = self.get_view()
         response_view.run_command("rest_replace_view_text", {"text": response_text})
         self.log_to_status(msg, response_view)
 
@@ -113,7 +120,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         self.log_to_status(msg)
         error = thread.get_error()
         error_text = self.get_error_content(thread.request, *error)
-        response_view = self.window.new_file()
+        response_view = self.get_view()
         response_view.run_command("rest_replace_view_text", {"text": error_text})
         self.log_to_status(msg, response_view)
 
