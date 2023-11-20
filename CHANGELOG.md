@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Add option to format JSON responses based on settings:
+  + If `format_json` is set to `true`, responses with a Content-Type header including
+  `application/json` will be formatted.
+  + `format_json_indent` controls the number of spaces per indentation level,
+  + Set `format_json_sort_keys` to `true` to sort the keys in alphabetical order.
+
 ## 0.2.2 (2023-10-15)
 
 - Show message on status bar when an error occurs during parsing of a request block.
