@@ -1,0 +1,7 @@
+{
+    // Format JSON responses
+    "format_json": false,
+    // Format JSON responses parameters, only relevant if `format_json` is true
+    "format_json_indent": 2,
+    "format_json_sort_keys": true,
+}
