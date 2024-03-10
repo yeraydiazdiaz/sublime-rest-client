@@ -6,7 +6,14 @@ import urllib3
 
 from .request import Request
 
-http = urllib3.PoolManager(cert_reqs="CERT_REQUIRED", ca_certs=certifi.where())
+http = None
+
+def setup(settings):
+    global http
+    http = urllib3.PoolManager(
+        cert_reqs="CERT_NONE" if settings.get("disable_ssl_validation") else "CERT_REQUIRED",
+        ca_certs=certifi.where()
+    )
 
 
 @dataclass

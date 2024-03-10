@@ -4,4 +4,8 @@
     // Format JSON responses parameters, only relevant if `format_json` is true
     "format_json_indent": 2,
     "format_json_sort_keys": true,
+    // in some rare cases it may be required to disable ssl certificate validation
+    // note that this makes the plugin vulnerable to mitm attacks
+    // so if not absolutely needed this setting should remain false
+    "disable_ssl_validation": true,
 }
