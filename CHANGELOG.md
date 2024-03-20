@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add settings menu
+
 ## 1.0.0 (2024-03-10)
 
 - Add option to format JSON responses based on settings:
