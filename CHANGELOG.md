@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 (2024-03-21)
 
-- Add settings menu
+- Add settings menu.
 
 ## 1.0.0 (2024-03-10)
 
