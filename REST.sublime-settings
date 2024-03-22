@@ -7,5 +7,5 @@
     // in some rare cases it may be required to disable ssl certificate validation
     // note that this makes the plugin vulnerable to mitm attacks
     // so if not absolutely needed this setting should remain false
-    "disable_ssl_validation": true,
+    "disable_ssl_validation": false
 }

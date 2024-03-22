@@ -16,9 +16,17 @@ import sublime_plugin
 from .rest_client import Response, client, parser
 from .rest_client.request import Request
 
+
 SETTINGS_FILE = "REST.sublime-settings"
 settings = sublime.load_settings(SETTINGS_FILE)
-client.setup(settings)
+
+
+def apply_settings(settings):
+    client.setup(settings)
+
+
+settings.add_on_change("tag", lambda: apply_settings(settings))
+apply_settings(settings)
 
 
 class RestException(Exception):
