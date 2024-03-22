@@ -16,7 +16,17 @@ import sublime_plugin
 from .rest_client import Response, client, parser
 from .rest_client.request import Request
 
+
 SETTINGS_FILE = "REST.sublime-settings"
+settings = sublime.load_settings(SETTINGS_FILE)
+
+
+def apply_settings(settings):
+    client.setup(settings)
+
+
+settings.add_on_change("tag", lambda: apply_settings(settings))
+apply_settings(settings)
 
 
 class RestException(Exception):
@@ -58,7 +68,6 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
     def __init__(self, *args: Tuple[Any], **kwargs: Dict[Any, Any]) -> None:
         super().__init__(*args, **kwargs)
         self._tick = 0
-        self.settings = sublime.load_settings(SETTINGS_FILE)
 
     def run(self, *args: Tuple[Any]) -> None:
         print("Running Sublime REST", args)
@@ -143,7 +152,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         http_status = HTTPStatus(status)
         content_type = headers.get("Content-Type")
         if (
-            self.settings["format_json"] is True
+            settings["format_json"] is True
             and content_type is not None
             and "application/json" in content_type
         ):
@@ -162,8 +171,8 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
             payload = json.loads(body)
             return json.dumps(
                 payload,
-                indent=self.settings["format_json_indent"],
-                sort_keys=self.settings["format_json_indent"],
+                indent=settings["format_json_indent"],
+                sort_keys=settings["format_json_indent"],
             )
         except Exception:
             print("Failed to format JSON payload")
