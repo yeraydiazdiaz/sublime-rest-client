@@ -59,6 +59,10 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         super().__init__(*args, **kwargs)
         self._tick = 0
         self.settings = sublime.load_settings(SETTINGS_FILE)
+        client.manager.configure(self.settings)
+        self.settings.add_on_change(
+            "rest_client", lambda: client.manager.configure(self.settings)
+        )
 
     def run(self, *args: Tuple[Any]) -> None:
         print("Running Sublime REST", args)

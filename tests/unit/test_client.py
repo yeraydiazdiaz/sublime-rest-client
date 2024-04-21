@@ -23,3 +23,19 @@ def test_request(httpserver: HTTPServer) -> None:
 
     assert response.status == 200
     assert json.loads(response.data) == response_body
+
+
+def test_manager_configure_with_no_hosts() -> None:
+    client.manager.configure({})
+    assert client.manager.pools_per_host == {}
+
+
+def test_manager_configure_creates_connection_pools() -> None:
+    client.manager.configure(
+        {"host_settings": {"localhost:8080": {"disable_ssl_validation": True}}}
+    )
+    pool = client.manager.pools_per_host.get("localhost:8080")
+    assert pool is not None
+    assert pool.host == "localhost"
+    assert pool.port == 8080
+    assert pool.cert_reqs == "CERT_NONE"

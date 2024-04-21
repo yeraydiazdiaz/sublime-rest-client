@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+- Add ability to set host settings. Users can now define settings that will only be
+applied to a specific host. These will need to be specified under `host_settings` in the
+REST Client settings, e.g.:
+
+```json
+{
+    "host_settings": {
+        "localhost:8080": {
+            "disable_ssl_validation": true
+        }
+    }
+}
+```
+
+- Allow disabling of SSL validation. This is *not* recommended for general use as it
+can lead to man-in-the-middle attacks, however, in specific circumstances it can be
+necessary so it is allowed only as a per-host setting as described above.
+
 ## 1.0.2 (2024-04-23)
 
 - Switch settings menu to side-by-side base and user files.
