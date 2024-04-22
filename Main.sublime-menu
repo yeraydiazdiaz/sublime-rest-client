@@ -1,33 +1,20 @@
 [
     {
-        "mnemonic": "n",
-        "caption": "Preferences",
         "id": "preferences",
         "children": [
             {
-                "mnemonic": "P",
-                "caption": "Package Settings",
                 "id": "package-settings",
                 "children": [
                     {
                         "caption": "REST Client",
                         "children": [
                             {
-                                "caption": "Settings – Default",
-                                "command": "open_file",
+                                "caption": "Settings",
+                                "command": "edit_settings",
                                 "args": {
-                                    "file": "${packages}/REST Client/REST.sublime-settings"
+                                    "base_file": "${packages}/REST Client/REST.sublime-settings",
+                                    "default": "// Settings in here override those in \"REST Client/REST.sublime-settings\",\n\n{\n\t$0\n}\n"
                                 }
-                            },
-                            {
-                                "caption": "Settings – User",
-                                "command": "open_file",
-                                "args": {
-                                    "file": "${packages}/User/REST Client/REST.sublime-settings"
-                                },
-                            },
-                            {
-                                "caption": "-"
                             }
                         ]
                     }

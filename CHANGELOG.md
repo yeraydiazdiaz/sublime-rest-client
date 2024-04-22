@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Switch settings menu to side-by-side base and user files.
+
 ## 1.0.1 (2024-03-21)
 
 - Add settings menu.
