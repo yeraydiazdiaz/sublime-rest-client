@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.2 (2024-04-23)
 
 - Switch settings menu to side-by-side base and user files.
 
