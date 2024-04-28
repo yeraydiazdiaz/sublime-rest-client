@@ -1,4 +1,4 @@
-.PHONY: deps install-dev
+.PHONY: deps install-dev lint
 
 install-dev:
 	python -m pip install -U pip wheel setuptools
@@ -10,6 +10,6 @@ upgrade-deps:
 	python -m pip install --upgrade --target "./deps" -r requirements/main.txt
 
 lint:
-	black --check .
-	flake8
+	black --check plugin.py rest_client tests
+	flake8 plugin.py rest_client tests
 	mypy .
