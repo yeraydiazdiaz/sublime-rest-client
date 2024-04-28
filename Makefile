@@ -1,4 +1,4 @@
-.PHONY: deps install-dev lint
+.PHONY: deps install-dev lint test
 
 install-dev:
 	python -m pip install -U pip wheel setuptools
@@ -13,3 +13,7 @@ lint:
 	black --check plugin.py rest_client tests
 	flake8 plugin.py rest_client tests
 	mypy .
+
+test:
+	coverage run -m pytest
+	coverage report -m
