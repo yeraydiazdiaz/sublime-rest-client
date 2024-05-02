@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 (2024-05-02)
 
 - Add ability to set host settings. Users can now define settings that will only be
 applied to a specific host. These will need to be specified under `host_settings` in the
