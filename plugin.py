@@ -89,6 +89,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
                 )
             )
         else:
+            self.request_view.assign_syntax("scope:source.http")
             thread = HttpRequestThread(request)
             thread.start()
             self.handle_thread(thread)
