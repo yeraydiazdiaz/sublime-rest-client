@@ -12,7 +12,7 @@ _TYPE_BODY = typing.Union[bytes, typing.IO[typing.Any], typing.Iterable[bytes], 
 class ProxyConfig(typing.NamedTuple):
     ssl_context: ssl.SSLContext | None
     use_forwarding_for_https: bool
-    assert_hostname: None | str | Literal[False]
+    assert_hostname: None | str | typing.Literal[False]
     assert_fingerprint: str | None
 
 
@@ -28,8 +28,7 @@ class _ResponseOptions(typing.NamedTuple):
 
 if typing.TYPE_CHECKING:
     import ssl
-
-    from typing_extensions import Literal, Protocol
+    from typing import Protocol
 
     from .response import BaseHTTPResponse
 
@@ -125,7 +124,7 @@ if typing.TYPE_CHECKING:
 
         # Certificate verification methods
         cert_reqs: int | str | None
-        assert_hostname: None | str | Literal[False]
+        assert_hostname: None | str | typing.Literal[False]
         assert_fingerprint: str | None
         ssl_context: ssl.SSLContext | None
 
@@ -151,12 +150,12 @@ if typing.TYPE_CHECKING:
             *,
             timeout: _TYPE_TIMEOUT = _DEFAULT_TIMEOUT,
             source_address: tuple[str, int] | None = None,
-            blocksize: int = 8192,
+            blocksize: int = 16384,
             socket_options: _TYPE_SOCKET_OPTIONS | None = ...,
             proxy: Url | None = None,
             proxy_config: ProxyConfig | None = None,
             cert_reqs: int | str | None = None,
-            assert_hostname: None | str | Literal[False] = None,
+            assert_hostname: None | str | typing.Literal[False] = None,
             assert_fingerprint: str | None = None,
             server_hostname: str | None = None,
             ssl_context: ssl.SSLContext | None = None,

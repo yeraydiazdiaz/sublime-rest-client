@@ -1,13 +1,13 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.3
 Name: urllib3
-Version: 2.0.4
+Version: 2.2.3
 Summary: HTTP library with thread-safe connection pooling, file post, and more.
 Project-URL: Changelog, https://github.com/urllib3/urllib3/blob/main/CHANGES.rst
 Project-URL: Documentation, https://urllib3.readthedocs.io
 Project-URL: Code, https://github.com/urllib3/urllib3
 Project-URL: Issue tracker, https://github.com/urllib3/urllib3/issues
 Author-email: Andrey Petrov <andrey.petrov@shazow.net>
-Maintainer-email: Seth Michael Larson <sethmichaellarson@gmail.com>, Quentin Pradet <quentin@pradet.me>
+Maintainer-email: Seth Michael Larson <sethmichaellarson@gmail.com>, Quentin Pradet <quentin@pradet.me>, Illia Volochii <illia.volochii@gmail.com>
 License-File: LICENSE.txt
 Keywords: filepost,http,httplib,https,pooling,ssl,threadsafe,urllib
 Classifier: Environment :: Web Environment
@@ -17,26 +17,22 @@ Classifier: Operating System :: OS Independent
 Classifier: Programming Language :: Python
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3 :: Only
-Classifier: Programming Language :: Python :: 3.7
 Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3.9
 Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
 Classifier: Programming Language :: Python :: Implementation :: CPython
 Classifier: Programming Language :: Python :: Implementation :: PyPy
 Classifier: Topic :: Internet :: WWW/HTTP
 Classifier: Topic :: Software Development :: Libraries
-Requires-Python: >=3.7
+Requires-Python: >=3.8
 Provides-Extra: brotli
-Requires-Dist: brotli>=1.0.9; platform_python_implementation == 'CPython' and extra == 'brotli'
-Requires-Dist: brotlicffi>=0.8.0; platform_python_implementation != 'CPython' and extra == 'brotli'
-Provides-Extra: secure
-Requires-Dist: certifi; extra == 'secure'
-Requires-Dist: cryptography>=1.9; extra == 'secure'
-Requires-Dist: idna>=2.0.0; extra == 'secure'
-Requires-Dist: pyopenssl>=17.1.0; extra == 'secure'
-Requires-Dist: urllib3-secure-extra; extra == 'secure'
+Requires-Dist: brotli>=1.0.9; (platform_python_implementation == 'CPython') and extra == 'brotli'
+Requires-Dist: brotlicffi>=0.8.0; (platform_python_implementation != 'CPython') and extra == 'brotli'
+Provides-Extra: h2
+Requires-Dist: h2<5,>=4; extra == 'h2'
 Provides-Extra: socks
 Requires-Dist: pysocks!=1.5.7,<2.0,>=1.5.6; extra == 'socks'
 Provides-Extra: zstd
@@ -132,6 +128,7 @@ Tidelift will coordinate the fix and disclosure with maintainers.
 
 - [@sethmlarson](https://github.com/sethmlarson) (Seth M. Larson)
 - [@pquentin](https://github.com/pquentin) (Quentin Pradet)
+- [@illia-v](https://github.com/illia-v) (Illia Volochii)
 - [@theacodes](https://github.com/theacodes) (Thea Flowers)
 - [@haikuginger](https://github.com/haikuginger) (Jess Shapiro)
 - [@lukasa](https://github.com/lukasa) (Cory Benfield)

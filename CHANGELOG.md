@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Upgrade urllib3 to 2.2.3.
+
 ## 1.1.0 (2024-05-02)
 
 - Add ability to set host settings. Users can now define settings that will only be

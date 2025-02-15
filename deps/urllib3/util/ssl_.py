@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import hmac
 import os
 import socket
@@ -7,7 +8,6 @@ import sys
 import typing
 import warnings
 from binascii import unhexlify
-from hashlib import md5, sha1, sha256
 
 from ..exceptions import ProxySchemeUnsupported, SSLError
 from .url import _BRACELESS_IPV6_ADDRZ_RE, _IPV4_RE
@@ -16,13 +16,15 @@ SSLContext = None
 SSLTransport = None
 HAS_NEVER_CHECK_COMMON_NAME = False
 IS_PYOPENSSL = False
-IS_SECURETRANSPORT = False
 ALPN_PROTOCOLS = ["http/1.1"]
 
 _TYPE_VERSION_INFO = typing.Tuple[int, int, int, str, int]
 
 # Maps the length of a digest to a possible hash function producing this digest
-HASHFUNC_MAP = {32: md5, 40: sha1, 64: sha256}
+HASHFUNC_MAP = {
+    length: getattr(hashlib, algorithm, None)
+    for length, algorithm in ((32, "md5"), (40, "sha1"), (64, "sha256"))
+}
 
 
 def _is_bpo_43522_fixed(
@@ -42,7 +44,7 @@ def _is_bpo_43522_fixed(
     """
     if implementation_name == "pypy":
         # https://foss.heptapod.net/pypy/pypy/-/issues/3129
-        return pypy_version_info >= (7, 3, 8) and version_info >= (3, 8)  # type: ignore[operator]
+        return pypy_version_info >= (7, 3, 8)  # type: ignore[operator]
     elif implementation_name == "cpython":
         major_minor = version_info[:2]
         micro = version_info[2]
@@ -79,8 +81,7 @@ def _is_has_never_check_common_name_reliable(
 
 if typing.TYPE_CHECKING:
     from ssl import VerifyMode
-
-    from typing_extensions import Literal, TypedDict
+    from typing import TypedDict
 
     from .ssltransport import SSLTransport as SSLTransportType
 
@@ -161,9 +162,13 @@ def assert_fingerprint(cert: bytes | None, fingerprint: str) -> None:
 
     fingerprint = fingerprint.replace(":", "").lower()
     digest_length = len(fingerprint)
-    hashfunc = HASHFUNC_MAP.get(digest_length)
-    if not hashfunc:
+    if digest_length not in HASHFUNC_MAP:
         raise SSLError(f"Fingerprint of invalid length: {fingerprint}")
+    hashfunc = HASHFUNC_MAP.get(digest_length)
+    if hashfunc is None:
+        raise SSLError(
+            f"Hash function implementation unavailable for fingerprint length: {digest_length}"
+        )
 
     # We need encode() here for py32; works on py2 and p33.
     fingerprint_bytes = unhexlify(fingerprint.encode())
@@ -321,13 +326,9 @@ def create_urllib3_context(
 
     # Enable post-handshake authentication for TLS 1.3, see GH #1634. PHA is
     # necessary for conditional client cert authentication with TLS 1.3.
-    # The attribute is None for OpenSSL <= 1.1.0 or does not exist in older
-    # versions of Python.  We only enable on Python 3.7.4+ or if certificate
-    # verification is enabled to work around Python issue #37428
-    # See: https://bugs.python.org/issue37428
-    if (cert_reqs == ssl.CERT_REQUIRED or sys.version_info >= (3, 7, 4)) and getattr(
-        context, "post_handshake_auth", None
-    ) is not None:
+    # The attribute is None for OpenSSL <= 1.1.0 or does not exist when using
+    # an SSLContext created by pyOpenSSL.
+    if getattr(context, "post_handshake_auth", None) is not None:
         context.post_handshake_auth = True
 
     # The order of the below lines setting verify_mode and check_hostname
@@ -371,7 +372,7 @@ def ssl_wrap_socket(
     ca_cert_dir: str | None = ...,
     key_password: str | None = ...,
     ca_cert_data: None | str | bytes = ...,
-    tls_in_tls: Literal[False] = ...,
+    tls_in_tls: typing.Literal[False] = ...,
 ) -> ssl.SSLSocket:
     ...
 
@@ -411,8 +412,10 @@ def ssl_wrap_socket(
     tls_in_tls: bool = False,
 ) -> ssl.SSLSocket | SSLTransportType:
     """
-    All arguments except for server_hostname, ssl_context, and ca_cert_dir have
-    the same meaning as they do when using :func:`ssl.wrap_socket`.
+    All arguments except for server_hostname, ssl_context, tls_in_tls, ca_cert_data and
+    ca_cert_dir have the same meaning as they do when using
+    :func:`ssl.create_default_context`, :meth:`ssl.SSLContext.load_cert_chain`,
+    :meth:`ssl.SSLContext.set_ciphers` and :meth:`ssl.SSLContext.wrap_socket`.
 
     :param server_hostname:
         When SNI is supported, the expected hostname of the certificate
@@ -461,10 +464,7 @@ def ssl_wrap_socket(
         else:
             context.load_cert_chain(certfile, keyfile, key_password)
 
-    try:
-        context.set_alpn_protocols(ALPN_PROTOCOLS)
-    except NotImplementedError:  # Defensive: in CI, we always have set_alpn_protocols
-        pass
+    context.set_alpn_protocols(ALPN_PROTOCOLS)
 
     ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
     return ssl_sock
