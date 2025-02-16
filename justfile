@@ -1,5 +1,3 @@
-.PHONY: deps install-dev lint test
-
 install-dev:
 	python -m pip install -U pip wheel setuptools
 	python -m pip install -r requirements/dev.txt
