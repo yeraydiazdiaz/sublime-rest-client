@@ -1,18 +1,18 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v5.0.0
     hooks:
     -   id: trailing-whitespace
         exclude: deps
     -   id: end-of-file-fixer
         exclude: deps
 -   repo: https://github.com/pycqa/flake8
-    rev: 3.9.2
+    rev: 7.1.1
     hooks:
     -   id: flake8
         exclude: deps
 -   repo: https://github.com/psf/black
-    rev: "22.3.0"
+    rev: "24.8.0"
     hooks:
       - id: black
         exclude: deps
