@@ -206,6 +206,24 @@ GET https://httpbin.org/get
 Authorization: Bearer {{token}}
 ```
 
+#### dotenv support
+
+Sublime REST Client will also read `.env` file and `*.env` files in the project directory.
+The contents will be added as variables which can be substituted using `{{$dotenv NAME}}`:
+
+Contents of `.env`
+
+```
+TOKEN=ABC123
+```
+
+Request file:
+
+```
+GET https://httpbin.org/get
+Authorization: Bearer {{$dotenv TOKEN}}
+```
+
 ## Development
 
 1. Install the [`just`](https://github.com/casey/just) command runner
