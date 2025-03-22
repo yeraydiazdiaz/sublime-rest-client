@@ -1,5 +1,5 @@
 import re
-from typing import List, Mapping, Optional, Tuple
+from typing import Dict, List, Mapping, Optional, Tuple
 
 from .request import Request
 
@@ -12,7 +12,9 @@ class ParserError(Exception):
     pass
 
 
-def parse(contents: str, pos: int) -> Request:
+def parse(
+    contents: str, pos: int, dotenv_vars: Optional[Dict[str, Optional[str]]] = None
+) -> Request:
     """
     Constructs a Request object from the contents of the view and the position
     of the cursor in it.
@@ -39,17 +41,22 @@ def parse(contents: str, pos: int) -> Request:
     }
 
     """
+    dotenv_vars = {} if dotenv_vars is None else dotenv_vars
     try:
         variables = _get_variables(contents)
         block = _get_request_block(contents, pos)
-        block = _apply_variable_substitution(block, variables)
+        block = _apply_variable_substitution(
+            block,
+            variables,
+            {k: v if v is not None else "" for k, v in dotenv_vars.items()},
+        )
         return _parse_request_block(block)
     except ValueError as exc:
         raise ParserError("Error parsing request block") from exc
 
 
 def _get_variables(contents: str) -> Mapping[str, str]:
-    return {name: value for name, value in VARIABLES_RE.findall(contents)}
+    return {name: value.strip() for name, value in VARIABLES_RE.findall(contents)}
 
 
 def _get_request_block(contents: str, pos: int) -> str:
@@ -108,7 +115,11 @@ def _parse_headers_section(
     return headers if headers else None
 
 
-def _apply_variable_substitution(block: str, variables: Mapping[str, str]) -> str:
+def _apply_variable_substitution(
+    block: str, variables: Mapping[str, str], dotenv_vars: Dict[str, str]
+) -> str:
+    for name, value in dotenv_vars.items():
+        block = block.replace("{{$dotenv %s}}" % name, value)
     for name, value in variables.items():
         block = block.replace("{{%s}}" % name, value)
     return block

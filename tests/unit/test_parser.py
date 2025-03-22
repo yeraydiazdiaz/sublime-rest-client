@@ -160,6 +160,8 @@ def test_variable_substitution_last_name_is_used(sep: str) -> None:
             "  ?foo={{foo}}",
             "content-type: application/json",
             "authentication: bearer {{token}}",
+            "",
+            '{"token": {{token}}}',
         ]
     )
 
@@ -168,4 +170,27 @@ def test_variable_substitution_last_name_is_used(sep: str) -> None:
     assert req == Request(
         url="https://example.org?foo=bar",
         headers={"authentication": "bearer 4567", "content-type": "application/json"},
+        body='{"token": 4567}',
+    )
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_variable_substitution_dotenv(sep: str) -> None:
+    contents = sep.join(
+        [
+            "@int = 2",
+            "https://example.org",
+            "content-type: application/json",
+            "authentication: bearer {{$dotenv token}}",
+            "",
+            '{"dotenv": {{$dotenv int}}, "local": {{int}}}',
+        ]
+    )
+
+    req = parser.parse(contents, 0, {"token": "1234", "int": "1"})
+
+    assert req == Request(
+        url="https://example.org",
+        headers={"authentication": "bearer 1234", "content-type": "application/json"},
+        body='{"dotenv": 1, "local": 2}',
     )

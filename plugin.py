@@ -3,6 +3,7 @@ import os.path
 import sys
 import threading
 import traceback
+from glob import glob
 from http import HTTPStatus
 from time import perf_counter
 from typing import Any, Dict, Optional, Tuple
@@ -12,6 +13,7 @@ sys.path.append(os.path.dirname(__file__) + "/deps")
 
 import sublime
 import sublime_plugin
+from dotenv import dotenv_values
 
 from .rest_client import Response, client, parser
 from .rest_client.request import Request
@@ -74,9 +76,10 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
             return
 
         self.log_to_status("Sending request for: `{}`".format(contents))
+        dotenv_vars = self._read_dotenv_vars()
 
         try:
-            request = parser.parse(contents, pos)
+            request = parser.parse(contents, pos, dotenv_vars)
         except Exception:
             self.log_to_status(
                 " ".join(
@@ -185,6 +188,21 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
                 traceback,
             ]
         )
+
+    def _read_dotenv_vars(self) -> Dict[str, Optional[str]]:
+        dotenv_file_paths = []
+        for folder in self.window.folders():
+            path = os.path.join(folder, ".env")
+            if os.path.exists(path):
+                dotenv_file_paths.append(path)
+            for env_file_path in glob(os.path.join(folder, "*.env")):
+                dotenv_file_paths.append(env_file_path)
+
+        dotenv_vars = {}
+        for dotenv_file_path in dotenv_file_paths:
+            dotenv_vars.update(dotenv_values(dotenv_file_path))
+
+        return dotenv_vars
 
 
 class RestReplaceViewTextCommand(sublime_plugin.TextCommand):
