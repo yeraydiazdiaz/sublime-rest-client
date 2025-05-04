@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Union
 
@@ -8,13 +9,8 @@ from .request import Request
 
 
 class Manager:
-    _default_pool: Optional[urllib3.PoolManager] = None
+    _default_pool: Optional[Union[urllib3.PoolManager, urllib3.ProxyManager]] = None
     pools_per_host: Dict[str, urllib3.HTTPSConnectionPool] = {}
-
-    def __init__(self) -> None:
-        self._default_pool = urllib3.PoolManager(
-            cert_reqs="CERT_REQUIRED", ca_certs=certifi.where()
-        )
 
     @property
     def default_pool(self) -> urllib3.PoolManager:
@@ -24,6 +20,16 @@ class Manager:
         return self._default_pool
 
     def configure(self, settings: Dict[str, Any]) -> None:
+        proxy_url = self._get_http_proxy_url(settings)
+        if proxy_url:
+            print(f"Configuring client with proxy URL {proxy_url}")
+            self._default_pool = urllib3.ProxyManager(
+                proxy_url=proxy_url, cert_reqs="CERT_REQUIRED", ca_certs=certifi.where()
+            )
+        else:
+            self._default_pool = urllib3.PoolManager(
+                cert_reqs="CERT_REQUIRED", ca_certs=certifi.where()
+            )
         for host_with_port, host_settings in settings.get("host_settings", {}).items():
             kwargs = self._settings_to_kw(host_settings)
             host = host_with_port
@@ -47,6 +53,10 @@ class Manager:
             if setting == "disable_ssl_validation" and value:
                 kwargs["cert_reqs"] = "CERT_NONE"
         return kwargs
+
+    def _get_http_proxy_url(self, settings: Dict[str, Any]) -> Optional[str]:
+        proxy_url = settings.get("proxy_url")
+        return proxy_url or os.environ.get("HTTPS_PROXY", os.environ.get("HTTP_PROXY"))
 
 
 @dataclass

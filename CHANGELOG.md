@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Support for proxies.
+
 ## 1.2.0 (2025-03-22)
 
 - Upgrade urllib3 to 2.2.3.

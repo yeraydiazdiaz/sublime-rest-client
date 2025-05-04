@@ -224,6 +224,14 @@ GET https://httpbin.org/get
 Authorization: Bearer {{$dotenv TOKEN}}
 ```
 
+#### Proxy support
+
+Sublime REST Client will respect the `HTTP_PROXY` and `HTTPS_PROXY` environment variables.
+Alternatively, you can set a `proxy_url` setting which will take precendence over the
+environment variables.
+
+SOCKS proxies are not supported yet, only HTTP and HTTPS.
+
 ## Development
 
 1. Install the [`just`](https://github.com/casey/just) command runner
