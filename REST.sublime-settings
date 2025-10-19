@@ -4,6 +4,8 @@
     // Format JSON responses parameters, only relevant if `format_json` is true
     "format_json_indent": 2,
     "format_json_sort_keys": true,
+    // Where the response should be shown, either `tab` or `panel`
+    "response_view": "tab",
     // Proxy URL, takes precendece over HTTP_PROXY and HTTPS_PROXY environment variables
     // "proxy_url": "http://localhost:3128",
 }

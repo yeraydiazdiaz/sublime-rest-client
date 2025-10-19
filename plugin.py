@@ -18,6 +18,7 @@ from dotenv import dotenv_values
 from .rest_client import Response, client, parser
 from .rest_client.request import Request
 
+PANEL_NAME = "REST Client Response"
 SETTINGS_FILE = "REST.sublime-settings"
 
 
@@ -103,6 +104,15 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         else:
             self.on_error(thread)
 
+    def get_response_view(self) -> sublime.View:
+        response_view = self.settings.get("response_view")
+        if response_view == "panel":
+            view = self.window.create_output_panel(PANEL_NAME)
+            self.window.run_command("show_panel", {"panel": f"output.{PANEL_NAME}"})
+            return view
+        else:
+            return self.window.new_file()
+
     def on_success(self, thread: HttpRequestThread) -> None:
         msg = f"Response received in {thread.elapsed:.3f} seconds"
         self.log_to_status(msg)
@@ -111,7 +121,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
             thread.request, response.status, response.headers, response.data
         )
 
-        response_view = self.window.new_file()
+        response_view = self.get_response_view()
         response_view.run_command("rest_replace_view_text", {"text": response_text})
         self.log_to_status(msg, response_view)
 
@@ -120,7 +130,7 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         self.log_to_status(msg)
         error = thread.get_error()
         error_text = self.get_error_content(thread.request, *error)
-        response_view = self.window.new_file()
+        response_view = self.get_response_view()
         response_view.run_command("rest_replace_view_text", {"text": error_text})
         self.log_to_status(msg, response_view)
 
