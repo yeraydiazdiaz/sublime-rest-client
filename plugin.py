@@ -65,11 +65,10 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         self.settings.add_on_change(
             "rest_client", lambda: client.manager.configure(self.settings)
         )
-
-    def run(self, *args: Tuple[Any]) -> None:
-        print("Running Sublime REST", args)
         self.request_view = self.window.active_view()
 
+    def run(self, *args: Tuple[Any]) -> None:
+        self.request_view = self.window.active_view()
         contents, pos = self.get_request_text_from_selection()
         if contents == "":
             self.log_to_status("Invalid request text: `{}`".format(contents))
@@ -82,14 +81,10 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
             request = parser.parse(contents, pos, dotenv_vars)
         except Exception:
             self.log_to_status(
-                " ".join(
-                    [
-                        "Error while parsing REST request.",
-                        "Please check the console (View > Show Console)",
-                        "and report the error on",
-                        "https://github.com/yeraydiazdiaz/sublime-rest-client/issues",
-                    ]
-                )
+                "Error while parsing REST request. "
+                "Please check the console (View > Show Console) "
+                "and report the error on "
+                "https://github.com/yeraydiazdiaz/sublime-rest-client/issues"
             )
         else:
             self.request_view.assign_syntax("scope:source.http")
