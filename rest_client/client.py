@@ -57,7 +57,7 @@ class Response:
 
 
 def request(request: Request) -> Response:
-    print(f"Requesting {request.method} {request.url}: {request.body}")
+    print(f"Requesting {request.method} {request.url}")
     pool = manager.get_pool(request.host)
     response = pool.request(
         request.method,
