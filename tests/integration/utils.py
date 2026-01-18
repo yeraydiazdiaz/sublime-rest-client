@@ -19,11 +19,15 @@ def get_contents_of_view(view: sublime.View) -> str:
 def parse_response(
     response_text: str, parse_json: bool = True
 ) -> Tuple[str, Dict, Union[Dict, str]]:
-    status, headers, body = response_text.split("\n\n")
-    headers_dict = {}
-    for header in headers.split("\n"):
-        k, v = header.split(": ")
-        headers_dict[k] = v
+    try:
+        status, headers, body = response_text.split("\n\n")
+    except ValueError:
+        raise ValueError(f"Unable to split response text: {response_text}")
+    else:
+        headers_dict = {}
+        for header in headers.split("\n"):
+            k, v = header.split(": ")
+            headers_dict[k] = v
 
-    body = json.loads(body) if parse_json else body
-    return status, headers_dict, body
+        body = json.loads(body) if parse_json else body
+        return status, headers_dict, body
