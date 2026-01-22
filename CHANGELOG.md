@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Support for proxies.
+- New option for showing response view in a panel.
 
 ## 1.2.0 (2025-03-22)
 
