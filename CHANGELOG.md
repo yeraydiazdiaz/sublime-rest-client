@@ -1,9 +1,9 @@
 # Changelog
 
-## Unreleased
+## 1.2.1 (2026-01-24)
 
 - Support for proxies.
-- New option for showing response view in a panel.
+- New option for showing response view in a panel (@james-black)
 
 ## 1.2.0 (2025-03-22)
 
