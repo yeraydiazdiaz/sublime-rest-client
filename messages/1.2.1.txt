@@ -1,0 +1,13 @@
+# 1.2.0 (2025-03-22)
+
+- Support for proxies:
+
+Sublime REST Client will respect the `HTTP_PROXY` and `HTTPS_PROXY` environment variables.
+Alternatively, you can set a `proxy_url` setting which will take precendence over the
+environment variables.
+
+SOCKS proxies are not supported yet, only HTTP and HTTPS.
+
+- New option for showing response view in a panel (@james-black)
+
+Available by changing the `response_view` to `panel`.
