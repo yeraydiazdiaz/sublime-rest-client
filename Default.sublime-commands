@@ -2,5 +2,13 @@
     {
         "caption": "REST: Send request",
         "command": "rest_request"
+    },
+    {
+        "caption": "Preferences: REST Client Settings",
+        "command": "edit_settings",
+        "args": {
+            "base_file": "${packages}/REST Client/REST.sublime-settings",
+            "default": "{\n\t$0\n}\n"
+        }
     }
 ]
