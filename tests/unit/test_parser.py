@@ -194,3 +194,28 @@ def test_variable_substitution_dotenv(sep: str) -> None:
         headers={"authentication": "bearer 1234", "content-type": "application/json"},
         body='{"dotenv": 1, "local": 2}',
     )
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_body_must_be_treated_as_rest_of_block(sep: str) -> None:
+    contents = sep.join(
+        [
+            "POST https://example.org",
+            "content-type: application/json",
+            "",
+            "",
+            '{ "foo": "bar",',
+            "",
+            "",
+            '"fizz": "buzz" }',
+        ]
+    )
+
+    req = parser.parse(contents, 0)
+
+    assert req == Request(
+        url="https://example.org",
+        method="POST",
+        headers={"content-type": "application/json"},
+        body="\n".join(['{ "foo": "bar",', "", "", '"fizz": "buzz" }']),
+    )

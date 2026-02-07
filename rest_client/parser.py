@@ -74,9 +74,11 @@ def _get_request_block(contents: str, pos: int) -> str:
 
 
 def _parse_request_block(block: str) -> Request:
-    [url_section, *body_section] = block.split("\n\n", 2)
+    [url_section, *body_section] = block.split("\n\n", maxsplit=1)
     method, url, headers = _parse_url_section(url_section)
-    body = body_section[0] if body_section else None
+    body = None
+    if body_section:
+        body = body_section[0].strip() or None
     return Request(url=url, method=method, headers=headers, body=body)
 
 
