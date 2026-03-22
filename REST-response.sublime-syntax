@@ -14,7 +14,7 @@ contexts:
       captures:
         1: keyword.control.http
 
-    - match: (\d{3} [A-Z ]+)
+    - match: (\d{3} [A-Za-z_ ]+)
       name: http.status_code
       captures:
         1: string.other.http
