@@ -18,7 +18,7 @@ from dotenv import dotenv_values
 from .rest_client import Response, client, parser
 from .rest_client.request import Request
 
-PANEL_NAME = "REST Client Response"
+OUTPUT_NAME = "REST Client Response"
 SETTINGS_FILE = "REST.sublime-settings"
 
 
@@ -107,11 +107,12 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
     def get_response_view(self) -> sublime.View:
         response_view = self.settings.get("response_view")
         if response_view == "panel":
-            view = self.window.create_output_panel(PANEL_NAME)
-            self.window.run_command("show_panel", {"panel": f"output.{PANEL_NAME}"})
-            return view
+            view = self.window.create_output_panel(OUTPUT_NAME)
+            self.window.run_command("show_panel", {"panel": f"output.{OUTPUT_NAME}"})
         else:
-            return self.window.new_file()
+            view = self.window.new_file()
+            view.set_name(OUTPUT_NAME)
+        return view
 
     def on_success(self, thread: HttpRequestThread) -> None:
         msg = f"Response received in {thread.elapsed:.3f} seconds"

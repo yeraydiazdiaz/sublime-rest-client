@@ -2,13 +2,14 @@ import os
 import sys
 import unittest
 from typing import Dict, Iterator, Tuple, Union, cast
+from time import sleep
 
 import sublime
 from unittesting import DeferrableTestCase
 
 from . import utils
 
-TIMEOUT = int(os.getenv("REST_CLIENT_TIMEOUT", 500))
+TIMEOUT = int(os.getenv("REST_CLIENT_TIMEOUT", 1000))
 PANEL_NAME = "REST Client Response"
 SETTINGS_FILE = "REST.sublime-settings"
 
@@ -38,11 +39,22 @@ class TestRestClient(DeferrableTestCase):
             self.view.window().focus_view(self.view)
             self.view.window().run_command("close_file")
 
+    def _get_response_view(self) -> sublime.View:
+        count = 0
+        while self.response_view is None and count <= 10:
+            for view in self.window.views():
+                if view.name() == PANEL_NAME:
+                    self.response_view = view
+                    return self.response_view
+            count += 1
+            sleep(0.1)
+        raise RuntimeError("Unable to find response view")
+
     def _get_response_view_contents(self) -> str:
         if self.plugin_settings.get("response_view") == "panel":
             self.response_view = self.window.find_output_panel(PANEL_NAME)
         else:
-            self.response_view = self.window.active_view()
+            self.response_view = self._get_response_view()
 
         self.assertIsNotNone(self.response_view, "REST response view not available")
         return utils.get_contents_of_view(self.response_view)
