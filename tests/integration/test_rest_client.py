@@ -76,11 +76,11 @@ class TestRestClient(DeferrableTestCase):
 
     def test_simple_get(self) -> Iterator[int]:
         self.plugin_settings.set("response_view", "tab")
-        utils.set_text_on_view(self.view, "https://httpbin.org/get")
+        utils.set_text_on_view(self.view, "https://httpbingo.org/get")
         self.window.run_command("rest_request")
         yield TIMEOUT
         status, headers, body = self._get_response_json()
-        self.assertEqual(status, "GET https://httpbin.org/get 200 OK")
+        self.assertEqual(status, "GET https://httpbingo.org/get 200 OK")
         self.assertIn("Date", headers)
         self.assertIn("url", body)
 
@@ -89,7 +89,7 @@ class TestRestClient(DeferrableTestCase):
         text = "\n".join(
             [
                 "@token = ABC123",
-                "GET https://httpbin.org/get",
+                "GET https://httpbingo.org/get",
                 "Authentication: Bearer {{token}}",
             ]
         )
@@ -97,14 +97,14 @@ class TestRestClient(DeferrableTestCase):
         self.window.run_command("rest_request")
         yield TIMEOUT
         status, headers, body = self._get_response_json()
-        self.assertEqual(status, "GET https://httpbin.org/get 200 OK")
+        self.assertEqual(status, "GET https://httpbingo.org/get 200 OK")
         self.assertIn("Date", headers)
         self.assertEquals(body["headers"]["Authentication"], "Bearer ABC123")
 
     def test_post(self) -> Iterator[int]:
         text = "\n".join(
             [
-                "POST https://httpbin.org/post",
+                "POST https://httpbingo.org/post",
                 "content-type: application/json",
                 "\n",
                 '{"hello": "world!"}',
@@ -114,7 +114,7 @@ class TestRestClient(DeferrableTestCase):
         self.window.run_command("rest_request")
         yield TIMEOUT
         status, headers, body = self._get_response_str()
-        self.assertEqual(status, "POST https://httpbin.org/post 200 OK")
+        self.assertEqual(status, "POST https://httpbingo.org/post 200 OK")
         self.assertIn("Date", headers)
         self.assertIn('"hello": "world!"', body)
 
