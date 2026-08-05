@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Improve response highlighting (@ilkiri23)
+- Fix incorrect splitting of body (@ilkiri23)
+- Add edit_settings to commands (@ilkiri23)
+
 ## 1.2.1 (2026-01-24)
 
 - Support for proxies.
