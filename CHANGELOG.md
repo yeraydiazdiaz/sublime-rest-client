@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Set triple hash comments as symbols in syntax
+  + To allow quick navigation between request definitions in a single file.
 - Improve response highlighting (@ilkiri23)
 - Fix incorrect splitting of body (@ilkiri23)
 - Add edit_settings to commands (@ilkiri23)

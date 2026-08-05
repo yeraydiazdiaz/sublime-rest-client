@@ -8,6 +8,12 @@ prototype:
 
 contexts:
   main:
+    - match: ^\s*(###)\s+(.+?)\s*$
+      name: meta.toc-list.http
+      captures:
+        1: punctuation.definition.heading.http
+        2: entity.name.function.http
+
     - match: ^\s*(@)([^\s=]+)\s*=\s*(.*?)\s*$
       name: http.variables
       captures:
