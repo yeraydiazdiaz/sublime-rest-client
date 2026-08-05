@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.2 (2026-08-05)
 
 - Set triple hash comments as symbols in syntax
   + To allow quick navigation between request definitions in a single file.
