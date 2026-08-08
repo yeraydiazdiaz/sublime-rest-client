@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Improve syntax allowing defining each request as a symbol, instead of comments
+which are not as useful.
+
 ## 1.2.2 (2026-08-05)
 
 - Set triple hash comments as symbols in syntax
