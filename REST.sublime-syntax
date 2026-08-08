@@ -8,11 +8,8 @@ prototype:
 
 contexts:
   main:
-    - match: ^\s*(###)\s+(.+?)\s*$
-      name: meta.toc-list.http
-      captures:
-        1: punctuation.definition.heading.http
-        2: entity.name.function.http
+    - match: ^(?=\s*(?:(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|CONNECT|TRACE)\s+)?(?:https?://|\{\{[^}]+\}\}))
+      push: request
 
     - match: ^\s*(@)([^\s=]+)\s*=\s*(.*?)\s*$
       name: http.variables
@@ -25,11 +22,6 @@ contexts:
       name: http.comments
       captures:
         1: comment.line.sharp
-
-    - match: ^\s*(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|CONNECT|TRACE)
-      name: http.methods
-      captures:
-        1: keyword.control.http
 
     - match: (\{{2})([^}]+)(\}{2})
       name: http.variables
@@ -50,3 +42,21 @@ contexts:
       with_prototype:
         - match: ^[\}\]][\W]+$
           pop: true
+
+  request:
+    - meta_scope: entity.name.function.http
+    - match: $
+      pop: true
+    - match: (GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|CONNECT|TRACE)
+      captures:
+        1: keyword.control.http
+    - match: https?://
+      name: string.unquoted.http
+    - match: (\{{2})([^}]+)(\}{2})
+      name: http.variables
+      captures:
+        1: string.other.http
+        2: variable.parameter
+        3: string.other.http
+    - match: '[^\s{]+'
+      name: string.unquoted.http
