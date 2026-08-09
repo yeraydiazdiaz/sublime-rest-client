@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add support for automatic basic auth
+  + Users can now set the username and password in the request file as
+  `Authorization: Basic USER:PASSWORD`, the plugin will encode the header before sending
+  the request.
 - Improve syntax allowing defining each request as a symbol, instead of comments
 which are not as useful.
 

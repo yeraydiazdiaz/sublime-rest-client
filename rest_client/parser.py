@@ -1,3 +1,4 @@
+import base64
 import re
 from typing import Dict, List, Mapping, Optional, Tuple
 
@@ -6,6 +7,7 @@ from .request import Request
 BOUNDARY = "###"
 
 VARIABLES_RE = re.compile(r"^@(\w+)\s*=\s*(.+)$", re.MULTILINE)
+BASIC_AUTH_RE = re.compile(r"^basic(?:\s+(.*))?$", re.IGNORECASE)
 
 
 class ParserError(Exception):
@@ -112,9 +114,29 @@ def _parse_headers_section(
     headers = {}
     for line in headers_section:
         key, value = line.split(":", maxsplit=1)
-        headers[key.strip()] = value.strip()
+        key = key.strip()
+        value = value.strip()
+        headers[key] = _encode_basic_auth_header(key, value)
 
     return headers if headers else None
+
+
+def _encode_basic_auth_header(key: str, value: str) -> str:
+    if key.lower() != "authorization":
+        return value
+
+    basic_auth_match = BASIC_AUTH_RE.match(value)
+    if basic_auth_match is None:
+        return value
+
+    credentials = basic_auth_match.group(1) or ""
+    if ":" not in credentials:
+        raise ParserError(
+            "Basic authorization credentials must use the format 'username:password'"
+        )
+
+    encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("ascii")
+    return f"Basic {encoded_credentials}"
 
 
 def _apply_variable_substitution(
