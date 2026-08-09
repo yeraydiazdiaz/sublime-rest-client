@@ -128,6 +128,54 @@ def test_headers_must_not_be_mixed_with_query_params(sep: str) -> None:
 
 
 @pytest.mark.parametrize("sep", ("\n", "\r\n"))
+@pytest.mark.parametrize(
+    "header, expected_authorization",
+    [
+        ("Authorization: Basic user:passwd", "Basic dXNlcjpwYXNzd2Q="),
+        ("authorization: bAsIc  user:pa:ss", "Basic dXNlcjpwYTpzcw=="),
+        ("Authorization: Basic café:pässword", "Basic Y2Fmw6k6cMOkc3N3b3Jk"),
+        ("Authorization: Bearer token", "Bearer token"),
+    ],
+)
+def test_authorization_header(
+    sep: str, header: str, expected_authorization: str
+) -> None:
+    contents = sep.join(["https://example.org", header])
+
+    req = parser.parse(contents, 0)
+
+    assert req == Request(
+        url="https://example.org",
+        headers={header.split(":", 1)[0]: expected_authorization},
+    )
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
+def test_basic_authorization_header_uses_substituted_variables(sep: str) -> None:
+    contents = sep.join(
+        [
+            "@username = user",
+            "https://example.org",
+            "Authorization: Basic {{username}}:{{$dotenv password}}",
+        ]
+    )
+
+    req = parser.parse(contents, 0, {"password": "passwd"})
+
+    assert req == Request(
+        url="https://example.org", headers={"Authorization": "Basic dXNlcjpwYXNzd2Q="}
+    )
+
+
+@pytest.mark.parametrize("value", ("Basic username", "Basic", "Basic   "))
+def test_basic_authorization_header_requires_username_and_password(value: str) -> None:
+    contents = "\n".join(["https://example.org", f"Authorization: {value}"])
+
+    with pytest.raises(parser.ParserError, match="username:password"):
+        _ = parser.parse(contents, 0)
+
+
+@pytest.mark.parametrize("sep", ("\n", "\r\n"))
 def test_variable_substitution(sep: str) -> None:
     contents = sep.join(
         [

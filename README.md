@@ -224,13 +224,30 @@ GET https://httpbin.org/get
 Authorization: Bearer {{$dotenv TOKEN}}
 ```
 
-#### Proxy support
+### Proxy support
 
 Sublime REST Client will respect the `HTTP_PROXY` and `HTTPS_PROXY` environment variables.
 Alternatively, you can set a `proxy_url` setting which will take precendence over the
 environment variables.
 
 SOCKS proxies are not supported yet, only HTTP and HTTPS.
+
+### Basic auth support
+
+Basic authentication credentials can be written as `username:password`. They are
+UTF-8 encoded and converted to the standard Base64 `Authorization` header before
+the request is sent:
+
+```
+GET https://httpbin.org/basic-auth/user/passwd
+Authorization: Basic user:passwd
+```
+
+Variables can be used in Basic credentials as usual:
+
+```
+Authorization: Basic {{username}}:{{$dotenv PASSWORD}}
+```
 
 ## Development
 
