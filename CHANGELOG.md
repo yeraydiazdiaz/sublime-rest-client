@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.3 (2026-08-10)
 
 - Add support for automatic basic auth
   + Users can now set the username and password in the request file as
