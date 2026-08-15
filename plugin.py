@@ -3,7 +3,6 @@ import os.path
 import sys
 import threading
 import traceback
-from glob import glob
 from http import HTTPStatus
 from time import perf_counter
 from typing import Any, Dict, Optional, Tuple
@@ -15,7 +14,7 @@ import sublime
 import sublime_plugin
 from dotenv import dotenv_values
 
-from .rest_client import Response, client, parser
+from .rest_client import Response, client, env, parser
 from .rest_client.request import Request
 
 OUTPUT_NAME = "REST Client Response"
@@ -196,17 +195,11 @@ class RestRequestCommand(sublime_plugin.WindowCommand):
         )
 
     def _read_dotenv_vars(self) -> Dict[str, Optional[str]]:
-        dotenv_file_paths = []
-        for folder in self.window.folders():
-            path = os.path.join(folder, ".env")
-            if os.path.exists(path):
-                dotenv_file_paths.append(path)
-            for env_file_path in glob(os.path.join(folder, "*.env")):
-                dotenv_file_paths.append(env_file_path)
+        file_name = self.request_view.file_name() if self.request_view else None
 
-        dotenv_vars = {}
-        for dotenv_file_path in dotenv_file_paths:
-            dotenv_vars.update(dotenv_values(dotenv_file_path))
+        dotenv_vars: Dict[str, Optional[str]] = {}
+        for path in env.dotenv_paths(self.window.folders(), file_name):
+            dotenv_vars.update(dotenv_values(path))
 
         return dotenv_vars
 

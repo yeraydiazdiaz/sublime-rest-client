@@ -208,7 +208,9 @@ Authorization: Bearer {{token}}
 
 #### dotenv support
 
-Sublime REST Client will also read `.env` file and `*.env` files in the project directory.
+Sublime REST Client will also read `.env` and `*.env` files in the project directory,
+as well as in the directory of the request file and any directory between the two.
+The closest file wins, so a `.env` next to your request file overrides the project one.
 The contents will be added as variables which can be substituted using `{{$dotenv NAME}}`:
 
 Contents of `.env`
